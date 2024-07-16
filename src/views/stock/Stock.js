@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table } from 'reactstrap'
-import { ShoppingCart } from 'react-feather' // Update this path accordingly
+import React, { useState } from 'react'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
+import { ShoppingCart } from 'react-feather'
+import AddStockModal from './StockModal' // Update the path accordingly
 
 const Stock = () => {
   const initialMainStock = [
@@ -15,13 +16,38 @@ const Stock = () => {
   const [mainStock, setMainStock] = useState(initialMainStock)
   const [onlineOrderStock, setOnlineOrderStock] = useState(initialOnlineOrderStock)
   const [shopStock, setShopStock] = useState(initialShopStock)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [stockType, setStockType] = useState('')
+
+  const toggleModal = () => setModalOpen(!modalOpen)
+
+  const addStock = (type, newStockItem) => {
+    switch (type) {
+      case 'Main Stock':
+        setMainStock([...mainStock, newStockItem])
+        break
+      case 'Online Order Stock':
+        setOnlineOrderStock([...onlineOrderStock, newStockItem])
+        break
+      case 'Shop Stock':
+        setShopStock([...shopStock, newStockItem])
+        break
+      default:
+        break
+    }
+  }
 
   return (
     <div className="stock-container">
+      <AddStockModal isOpen={modalOpen} toggle={toggleModal} addStock={addStock} stockType={stockType} />
+
       <Card>
         <CardHeader>
           <CardTitle tag="h5">
             <ShoppingCart /> Main Stock
+            <Button color="primary" onClick={() => { setStockType('Main Stock'); toggleModal() }} style={{ float: 'right' }}>
+              Add Stock
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardBody>
@@ -49,11 +75,14 @@ const Stock = () => {
           </Table>
         </CardBody>
       </Card>
-      
+
       <Card>
         <CardHeader>
           <CardTitle tag="h5">
             <ShoppingCart /> Online Order Stock
+            <Button color="primary" onClick={() => { setStockType('Online Order Stock'); toggleModal() }} style={{ float: 'right' }}>
+              Add Stock
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardBody>
@@ -81,11 +110,14 @@ const Stock = () => {
           </Table>
         </CardBody>
       </Card>
-      
+
       <Card>
         <CardHeader>
           <CardTitle tag="h5">
             <ShoppingCart /> Shop Stock
+            <Button color="primary" onClick={() => { setStockType('Shop Stock'); toggleModal() }} style={{ float: 'right' }}>
+              Add Stock
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardBody>

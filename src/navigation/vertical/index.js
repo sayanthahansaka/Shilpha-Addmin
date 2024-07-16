@@ -1,4 +1,4 @@
-import { Mail, Home, Box, BarChart2, ShoppingCart  } from 'react-feather'
+import { Mail, Home, Box, BarChart2, ShoppingCart, ShoppingBag, Archive, Airplay } from 'react-feather'
 
 export default [
   // {
@@ -8,9 +8,15 @@ export default [
   //   navLink: '/home'
   // },
   {
+    id: 'plan',
+    title: 'Plan',
+    icon: <Airplay size={20} />,
+    navLink: '/plan'
+  },
+  {
     id: 'online',
     title: 'Online',
-    icon: <ShoppingCart size={20} />,
+    icon: <ShoppingBag size={20} />,
     navLink: '/online'
   },
   {
@@ -20,10 +26,16 @@ export default [
     navLink: '/shop'
   },
   {
-    id: 'stock',
-    title: 'Stock',
+    id: 'materials stock',
+    title: 'Materials Stock',
+    icon: <Archive size={20} />,
+    navLink: '/materials'
+  },
+  {
+    id: 'Footwear stock',
+    title: 'Footwear Stock',
     icon: <Box size={20} />,
-    navLink: '/stock'
+    navLink: '/footwearstock'
   },
   {
     id: 'revenue',

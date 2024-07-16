@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react"
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from "reactstrap"
+import React, { useState } from 'react'
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap'
 
-const StockModal = ({ isOpen, toggle, addStock, updateStock, stock }) => {
+const AddStockModal = ({ isOpen, toggle, addStock, stockType }) => {
   const [formData, setFormData] = useState({
     itemName: '',
     quantity: '',
@@ -10,73 +10,47 @@ const StockModal = ({ isOpen, toggle, addStock, updateStock, stock }) => {
     date: ''
   })
 
-  useEffect(() => {
-    if (stock) {
-      setFormData(stock)
-    } else {
-      setFormData({
-        itemName: '',
-        quantity: '',
-        price: '',
-        supplier: '',
-        date: ''
-      })
-    }
-  }, [stock])
-
-  const handleChange = (event) => {
-    const { id, value } = event.target
-    setFormData({ ...formData, [id]: value })
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
   }
 
   const handleSubmit = () => {
-    if (stock) {
-      updateStock({ ...formData, stockID: stock.stockID })
-    } else {
-      const newStock = {
-        stockID: `stk${Math.floor(Math.random() * 1000)}`, // Generate a unique stock ID
-        ...formData
-      }
-      addStock(newStock) // Call parent function to add new stock
-    }
-    toggle() // Close modal after submission
+    addStock(stockType, formData)
+    toggle()
   }
 
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
-      <ModalHeader>{stock ? "Edit Stock" : "Add Stock"}</ModalHeader>
+      <ModalHeader toggle={toggle}>Add Stock Item to {stockType}</ModalHeader>
       <ModalBody>
         <FormGroup>
           <Label for="itemName">Item Name</Label>
-          <Input type="text" id="itemName" value={formData.itemName} onChange={handleChange} />
+          <Input type="text" name="itemName" id="itemName" value={formData.itemName} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
           <Label for="quantity">Quantity</Label>
-          <Input type="number" id="quantity" value={formData.quantity} onChange={handleChange} />
+          <Input type="number" name="quantity" id="quantity" value={formData.quantity} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
           <Label for="price">Price</Label>
-          <Input type="number" id="price" value={formData.price} onChange={handleChange} />
+          <Input type="number" name="price" id="price" value={formData.price} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
           <Label for="supplier">Supplier</Label>
-          <Input type="text" id="supplier" value={formData.supplier} onChange={handleChange} />
+          <Input type="text" name="supplier" id="supplier" value={formData.supplier} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
           <Label for="date">Date</Label>
-          <Input type="date" id="date" value={formData.date} onChange={handleChange} />
+          <Input type="date" name="date" id="date" value={formData.date} onChange={handleChange} />
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={handleSubmit}>
-          {stock ? "Update" : "Submit"}
-        </Button>{" "}
-        <Button color="secondary" onClick={toggle}>
-          Cancel
-        </Button>
+        <Button color="primary" onClick={handleSubmit}>Add Stock</Button>
+        <Button color="secondary" onClick={toggle}>Cancel</Button>
       </ModalFooter>
     </Modal>
   )
 }
 
-export default StockModal
+export default AddStockModal

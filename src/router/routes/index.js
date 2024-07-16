@@ -13,6 +13,10 @@ const Routes = [
     component: lazy(() => import('../../views/home/Home'))
   },
   {
+    path: '/plan',
+    component: lazy(() => import('../../views/plan/plan'))
+  },
+  {
     path: '/online',
     component: lazy(() => import('../../views/online/Online'))
   },
@@ -21,8 +25,12 @@ const Routes = [
     component: lazy(() => import('../../views/shop/Shop'))
   },
   {
-    path: '/stock',
+    path: '/footwearstock',
     component: lazy(() => import('../../views/stock/Stock'))
+  },
+  {
+    path: '/materials',
+    component: lazy(() => import('../../views/materials/Materials'))
   },
   {
     path: '/revenue',
