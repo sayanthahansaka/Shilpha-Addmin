@@ -21,6 +21,10 @@ const Routes = [
     component: lazy(() => import('../../views/shop/Shop'))
   },
   {
+    path: '/stock',
+    component: lazy(() => import('../../views/stock/Stock'))
+  },
+  {
     path: '/revenue',
     component: lazy(() => import('../../views/revenue/Revenue'))
   },
