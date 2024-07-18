@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
 import { Archive } from 'react-feather'
 import PlanModel from './planModel'
+import AddMaterialsModel from './AddMaterialsModel'
 
 const Materials = () => {
   const initialStock = [
@@ -14,9 +15,11 @@ const Materials = () => {
   ]
 
   const [stock, setStock] = useState(initialStock)
-  const [modalOpen, setModalOpen] = useState(false)
+  const [planModalOpen, setPlanModalOpen] = useState(false)
+  const [addModalOpen, setAddModalOpen] = useState(false)
 
-  const toggleModal = () => setModalOpen(!modalOpen)
+  const togglePlanModal = () => setPlanModalOpen(!planModalOpen)
+  const toggleAddModal = () => setAddModalOpen(!addModalOpen)
 
   return (
     <div className="stock-container">
@@ -25,7 +28,7 @@ const Materials = () => {
           <CardTitle tag="h5">
             <Archive /> Materials Stock
           </CardTitle>
-          <Button color="primary" onClick={toggleModal} style={{ float: 'right' }}>
+          <Button color="primary" onClick={togglePlanModal} style={{ float: 'right' }}>
             Create New Plan
           </Button>
         </CardHeader>
@@ -37,6 +40,7 @@ const Materials = () => {
                 <th>Quantity</th>
                 <th>Supplier</th>
                 <th>Date</th>
+                <th>Add Material</th>
               </tr>
             </thead>
             <tbody>
@@ -46,6 +50,11 @@ const Materials = () => {
                   <td>{item.quantity}</td>
                   <td>{item.supplier}</td>
                   <td>{item.date}</td>
+                  <td>
+                    <Button color="success" onClick={toggleAddModal}>
+                      Add Material
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -53,7 +62,8 @@ const Materials = () => {
         </CardBody>
       </Card>
 
-      <PlanModel isOpen={modalOpen} toggle={toggleModal} />
+      <PlanModel isOpen={planModalOpen} toggle={togglePlanModal} />
+      <AddMaterialsModel isOpen={addModalOpen} toggle={toggleAddModal} />
     </div>
   )
 }
