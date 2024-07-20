@@ -31,6 +31,9 @@ const Materials = () => {
           <Button color="primary" onClick={togglePlanModal} style={{ float: 'right' }}>
             Create New Plan
           </Button>
+          <Button color="success" onClick={togglePlanModal} style={{ float: 'right' }}>
+            Add New Material
+          </Button>
         </CardHeader>
         <CardBody>
           <Table bordered>

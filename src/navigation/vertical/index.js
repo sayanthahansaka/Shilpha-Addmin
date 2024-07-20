@@ -1,12 +1,12 @@
 import { Mail, Home, Box, BarChart2, ShoppingCart, ShoppingBag, Archive, Airplay } from 'react-feather'
 
 export default [
-  // {
-  //   id: 'home',
-  //   title: 'Home',
-  //   icon: <Home size={20} />,
-  //   navLink: '/home'
-  // },
+  {
+    id: 'home',
+    title: 'Home',
+    icon: <Home size={20} />,
+    navLink: '/home'
+  },
   {
     id: 'plan',
     title: 'Plan',

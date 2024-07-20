@@ -19,7 +19,7 @@ const Plan = () => {
               <tr>
                 <th>Item Name</th>
                 <th>Quantity</th>
-                <th>Emplyee Name</th>
+                <th>Employee Name</th>
                 <th>Start Date</th>
                 <th>
                   Article No
