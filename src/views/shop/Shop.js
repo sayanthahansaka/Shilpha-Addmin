@@ -111,7 +111,7 @@ const Shop = () => {
         <Table className="table-responsive" bordered style={{ marginTop: "20px" }}>
           <thead style={{ fontSize: "13px" }}>
             <tr>
-              <th>Shop ID</th>
+              <th>Shop Order ID</th>
               <th>Shop Name</th>
               <th>Address</th>
               <th>Phone Number</th>

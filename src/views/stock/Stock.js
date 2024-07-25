@@ -45,9 +45,9 @@ const Stock = () => {
         <CardHeader>
           <CardTitle tag="h5">
             <ShoppingCart /> Main Stock
-            <Button color="primary" onClick={() => { setStockType('Main Stock'); toggleModal() }} style={{ float: 'right' }}>
+            {/* <Button color="primary" onClick={() => { setStockType('Main Stock'); toggleModal() }} style={{ float: 'right' }}>
               Add Stock
-            </Button>
+            </Button> */}
           </CardTitle>
         </CardHeader>
         <CardBody>
@@ -56,8 +56,6 @@ const Stock = () => {
               <tr>
                 <th>Item Name</th>
                 <th>Quantity</th>
-                <th>Price</th>
-                <th>Supplier</th>
                 <th>Date</th>
               </tr>
             </thead>
@@ -66,8 +64,6 @@ const Stock = () => {
                 <tr key={index}>
                   <td>{item.itemName}</td>
                   <td>{item.quantity}</td>
-                  <td>{item.price}</td>
-                  <td>{item.supplier}</td>
                   <td>{item.date}</td>
                 </tr>
               ))}
@@ -91,8 +87,6 @@ const Stock = () => {
               <tr>
                 <th>Item Name</th>
                 <th>Quantity</th>
-                <th>Price</th>
-                <th>Supplier</th>
                 <th>Date</th>
               </tr>
             </thead>
@@ -101,8 +95,6 @@ const Stock = () => {
                 <tr key={index}>
                   <td>{item.itemName}</td>
                   <td>{item.quantity}</td>
-                  <td>{item.price}</td>
-                  <td>{item.supplier}</td>
                   <td>{item.date}</td>
                 </tr>
               ))}
@@ -126,8 +118,6 @@ const Stock = () => {
               <tr>
                 <th>Item Name</th>
                 <th>Quantity</th>
-                <th>Price</th>
-                <th>Supplier</th>
                 <th>Date</th>
               </tr>
             </thead>
@@ -136,8 +126,6 @@ const Stock = () => {
                 <tr key={index}>
                   <td>{item.itemName}</td>
                   <td>{item.quantity}</td>
-                  <td>{item.price}</td>
-                  <td>{item.supplier}</td>
                   <td>{item.date}</td>
                 </tr>
               ))}

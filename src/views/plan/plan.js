@@ -31,7 +31,7 @@ const Plan = () => {
                   <br />
                   <span style={{ fontSize: '0.8em' }}>(Desired output)</span>
                 </th>
-                <th>Done Or Proceessing</th>
+                <th>Done Or Proccessing</th>
               </tr>
             </thead>
             <tbody>
