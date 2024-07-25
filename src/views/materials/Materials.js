@@ -1,25 +1,33 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
 import { Archive } from 'react-feather'
 import PlanModel from './planModel'
 import AddMaterialsModel from './AddMaterialsModel'
+import UpdateMaterialsModel from './UpdateMaterialsModel'
+import { getAllmaterials } from '../../servirces/materials/MaterialsAPI'
 
 const Materials = () => {
-  const initialStock = [
-    { itemName: 'Insole', quantity: 100, supplier: 'Supplier 1', date: '2024-07-01' },
-    { itemName: 'Heel', quantity: 200, supplier: 'Supplier 2', date: '2024-07-02' },
-    { itemName: 'Vamp', quantity: 50, supplier: 'Supplier 3', date: '2024-07-03' },
-    { itemName: 'Sole', quantity: 75, supplier: 'Supplier 4', date: '2024-07-04' },
-    { itemName: 'Counter', quantity: 30, supplier: 'Supplier 5', date: '2024-07-05' },
-    { itemName: 'Glue', quantity: '60L', supplier: 'Supplier 6', date: '2024-07-05' }
-  ]
-
-  const [stock, setStock] = useState(initialStock)
+  const [stock, setStock] = useState([])
   const [planModalOpen, setPlanModalOpen] = useState(false)
   const [addModalOpen, setAddModalOpen] = useState(false)
+  const [updateModalOpen, setUpdateModalOpen] = useState(false)
+  const [selectedMaterial, setSelectedMaterial] = useState(null)
+
+  useEffect(() => {
+    const fetchMaterials = async () => {
+      const materials = await getAllmaterials()
+      console.log("get All materials Data", materials)
+      setStock(materials)
+    }
+    fetchMaterials()
+  }, [])
 
   const togglePlanModal = () => setPlanModalOpen(!planModalOpen)
   const toggleAddModal = () => setAddModalOpen(!addModalOpen)
+  const toggleUpdateModal = (material) => {
+    setSelectedMaterial(material)
+    setUpdateModalOpen(true)
+  }
 
   return (
     <div className="stock-container">
@@ -31,7 +39,7 @@ const Materials = () => {
           <Button color="primary" onClick={togglePlanModal} style={{ float: 'right' }}>
             Create New Plan
           </Button>
-          <Button color="success" onClick={togglePlanModal} style={{ float: 'right' }}>
+          <Button color="success" onClick={toggleAddModal} style={{ float: 'right' }}>
             Add New Material
           </Button>
         </CardHeader>
@@ -39,23 +47,27 @@ const Materials = () => {
           <Table bordered>
             <thead>
               <tr>
-                <th>Item Name</th>
+                <th>ID</th>
+                <th>Article No</th>
+                <th>Material Name</th>
                 <th>Quantity</th>
                 <th>Supplier</th>
-                <th>Date</th>
-                <th>Add Material</th>
+                <th>Create Date</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
-              {stock.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.itemName}</td>
-                  <td>{item.quantity}</td>
+              {stock.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.id}</td>
+                  <td>{item.articleNo}</td>
+                  <td>{item.materialName}</td>
+                  <td>{item.qty}</td>
                   <td>{item.supplier}</td>
-                  <td>{item.date}</td>
+                  <td>{item.createDate}</td>
                   <td>
-                    <Button color="success" onClick={toggleAddModal}>
-                      Add Material
+                    <Button onClick={() => toggleUpdateModal(item)} style={{ backgroundColor: 'yellow' }}>
+                      Update Material
                     </Button>
                   </td>
                 </tr>
@@ -67,6 +79,13 @@ const Materials = () => {
 
       <PlanModel isOpen={planModalOpen} toggle={togglePlanModal} />
       <AddMaterialsModel isOpen={addModalOpen} toggle={toggleAddModal} />
+      {selectedMaterial && (
+        <UpdateMaterialsModel 
+          isOpen={updateModalOpen} 
+          toggle={() => setUpdateModalOpen(false)} 
+          material={selectedMaterial} 
+        />
+      )}
     </div>
   )
 }

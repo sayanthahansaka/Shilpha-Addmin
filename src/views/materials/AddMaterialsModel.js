@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
+import { AddMaterial } from '../../servirces/materials/MaterialsAPI'
+import { toast } from 'react-toastify'
 
 const AddMaterialsModel = ({ isOpen, toggle }) => {
   const [formData, setFormData] = useState({
-    itemName: '',
-    quantity: '',
-    supplier: '',
-    date: ''
+    articleNo: '',
+    materialName: '',
+    qty: '',
+    supplier: ''
   })
 
   const handleChange = (e) => {
@@ -17,11 +19,17 @@ const AddMaterialsModel = ({ isOpen, toggle }) => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle the form submission logic here
-    console.log('New material added:', formData)
-    toggle()
+    try {
+      await AddMaterial(formData.articleNo, formData.materialName, formData.qty, formData.supplier)
+      console.log('New material added:', formData)
+      toast.success('Material added successfully!')
+      toggle()
+    } catch (error) {
+      console.error('Error adding material:', error)
+      toast.error('Error adding material. Please try again.')
+    }
   }
 
   return (
@@ -30,20 +38,20 @@ const AddMaterialsModel = ({ isOpen, toggle }) => {
       <Form onSubmit={handleSubmit}>
         <ModalBody>
           <FormGroup>
-            <Label for="itemName">Item Name</Label>
-            <Input type="text" name="itemName" id="itemName" value={formData.itemName} onChange={handleChange} required />
+            <Label for="articleNo">Article Number</Label>
+            <Input type="text" name="articleNo" id="articleNo" value={formData.articleNo} onChange={handleChange} required />
           </FormGroup>
           <FormGroup>
-            <Label for="quantity">Quantity</Label>
-            <Input type="text" name="quantity" id="quantity" value={formData.quantity} onChange={handleChange} required />
+            <Label for="materialName">Material Name</Label>
+            <Input type="text" name="materialName" id="materialName" value={formData.materialName} onChange={handleChange} required />
+          </FormGroup>
+          <FormGroup>
+            <Label for="qty">Quantity</Label>
+            <Input type="number" name="qty" id="qty" value={formData.qty} onChange={handleChange} required />
           </FormGroup>
           <FormGroup>
             <Label for="supplier">Supplier</Label>
             <Input type="text" name="supplier" id="supplier" value={formData.supplier} onChange={handleChange} required />
-          </FormGroup>
-          <FormGroup>
-            <Label for="date">Date</Label>
-            <Input type="date" name="date" id="date" value={formData.date} onChange={handleChange} required />
           </FormGroup>
         </ModalBody>
         <ModalFooter>
