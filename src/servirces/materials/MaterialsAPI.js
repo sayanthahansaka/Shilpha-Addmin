@@ -74,9 +74,8 @@ export async function getAllmaterials() {
 //     }
 //   }
 
-export async function AddMaterial(articleNo, materialName, qty, supplier) {
+export async function AddMaterial(materialName, qty, supplier) {
   const materialData = {
-    articleNo,
     materialName,
     qty,
     supplier
@@ -112,7 +111,7 @@ export async function updateMaterial(id, qty, supplier) {
     const apiObject = {
       method: 'PUT',
       authentication: true, // Ensure this is handled by your ApiService
-      endpoint: 'https://shilpha.133707331.xyz/api/v1/materials/', // Endpoint without ID in the URL
+      endpoint: 'materials/', // Endpoint without ID in the URL
       headers: {
         // 'Authorization': `Bearer <your-token-here>` // Replace with your actual token
         'Content-Type': 'multipart/form-data' // Not required; FormData sets this automatically

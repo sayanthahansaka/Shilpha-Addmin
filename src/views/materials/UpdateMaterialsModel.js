@@ -3,8 +3,9 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, La
 import { updateMaterial } from '../../servirces/materials/MaterialsAPI'
 import { toast } from 'react-toastify'
 
-const UpdateMaterialsModel = ({ isOpen, toggle, material }) => {
+const UpdateMaterialsModel = ({ isOpen, toggle, material, fetchMaterials }) => {
   const [formData, setFormData] = useState({
+    materialName: '',
     qty: '',
     supplier: ''
   })
@@ -12,8 +13,9 @@ const UpdateMaterialsModel = ({ isOpen, toggle, material }) => {
   useEffect(() => {
     if (material) {
       setFormData({
-        qty: material.qty,
-        supplier: material.supplier
+        materialName: material.materialName || '',
+        qty: material.qty || '',
+        supplier: material.supplier || ''
       })
     }
   }, [material])
@@ -29,8 +31,9 @@ const UpdateMaterialsModel = ({ isOpen, toggle, material }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await updateMaterial(material.id, formData.qty, formData.supplier)
+      await updateMaterial(material.id, formData.materialName, formData.qty, formData.supplier)
       toast.success('Material updated successfully!')
+      fetchMaterials() // Refresh the table data
       toggle()
     } catch (error) {
       console.error('Error updating material:', error)
@@ -43,6 +46,17 @@ const UpdateMaterialsModel = ({ isOpen, toggle, material }) => {
       <ModalHeader toggle={toggle}>Update Material</ModalHeader>
       <Form onSubmit={handleSubmit}>
         <ModalBody>
+          <FormGroup>
+            <Label for="materialName">Material Name</Label>
+            <Input
+              type="text"
+              name="materialName"
+              id="materialName"
+              value={formData.materialName}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
           <FormGroup>
             <Label for="qty">Quantity</Label>
             <Input

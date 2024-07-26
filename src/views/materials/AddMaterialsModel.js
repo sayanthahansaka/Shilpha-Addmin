@@ -3,9 +3,8 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, La
 import { AddMaterial } from '../../servirces/materials/MaterialsAPI'
 import { toast } from 'react-toastify'
 
-const AddMaterialsModel = ({ isOpen, toggle }) => {
+const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
   const [formData, setFormData] = useState({
-    articleNo: '',
     materialName: '',
     qty: '',
     supplier: ''
@@ -22,9 +21,9 @@ const AddMaterialsModel = ({ isOpen, toggle }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await AddMaterial(formData.articleNo, formData.materialName, formData.qty, formData.supplier)
-      console.log('New material added:', formData)
+      await AddMaterial(formData.materialName, formData.qty, formData.supplier)
       toast.success('Material added successfully!')
+      fetchMaterials() // Refresh the table data
       toggle()
     } catch (error) {
       console.error('Error adding material:', error)
@@ -37,10 +36,6 @@ const AddMaterialsModel = ({ isOpen, toggle }) => {
       <ModalHeader toggle={toggle}>Add New Material</ModalHeader>
       <Form onSubmit={handleSubmit}>
         <ModalBody>
-          <FormGroup>
-            <Label for="articleNo">Article Number</Label>
-            <Input type="text" name="articleNo" id="articleNo" value={formData.articleNo} onChange={handleChange} required />
-          </FormGroup>
           <FormGroup>
             <Label for="materialName">Material Name</Label>
             <Input type="text" name="materialName" id="materialName" value={formData.materialName} onChange={handleChange} required />

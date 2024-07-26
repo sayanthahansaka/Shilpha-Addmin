@@ -13,20 +13,23 @@ const Materials = () => {
   const [updateModalOpen, setUpdateModalOpen] = useState(false)
   const [selectedMaterial, setSelectedMaterial] = useState(null)
 
+  const fetchMaterials = async () => {
+    const materials = await getAllmaterials()
+    console.log("get All materials Data", materials)
+    setStock(materials)
+  }
+
   useEffect(() => {
-    const fetchMaterials = async () => {
-      const materials = await getAllmaterials()
-      console.log("get All materials Data", materials)
-      setStock(materials)
-    }
     fetchMaterials()
   }, [])
 
   const togglePlanModal = () => setPlanModalOpen(!planModalOpen)
   const toggleAddModal = () => setAddModalOpen(!addModalOpen)
-  const toggleUpdateModal = (material) => {
+  const toggleUpdateModal = () => setUpdateModalOpen(!updateModalOpen)
+
+  const openUpdateModalWithMaterial = (material) => {
     setSelectedMaterial(material)
-    setUpdateModalOpen(true)
+    toggleUpdateModal()
   }
 
   return (
@@ -48,7 +51,6 @@ const Materials = () => {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Article No</th>
                 <th>Material Name</th>
                 <th>Quantity</th>
                 <th>Supplier</th>
@@ -57,16 +59,18 @@ const Materials = () => {
               </tr>
             </thead>
             <tbody>
-              {stock.map((item) => (
-                <tr key={item.id}>
+              {stock.map((item, index) => (
+                <tr key={index}>
                   <td>{item.id}</td>
-                  <td>{item.articleNo}</td>
                   <td>{item.materialName}</td>
                   <td>{item.qty}</td>
                   <td>{item.supplier}</td>
                   <td>{item.createDate}</td>
                   <td>
-                    <Button onClick={() => toggleUpdateModal(item)} style={{ backgroundColor: 'yellow' }}>
+                    <Button
+                      onClick={() => openUpdateModalWithMaterial(item)}
+                      style={{ backgroundColor: 'yellow' }}
+                    >
                       Update Material
                     </Button>
                   </td>
@@ -78,14 +82,8 @@ const Materials = () => {
       </Card>
 
       <PlanModel isOpen={planModalOpen} toggle={togglePlanModal} />
-      <AddMaterialsModel isOpen={addModalOpen} toggle={toggleAddModal} />
-      {selectedMaterial && (
-        <UpdateMaterialsModel 
-          isOpen={updateModalOpen} 
-          toggle={() => setUpdateModalOpen(false)} 
-          material={selectedMaterial} 
-        />
-      )}
+      <AddMaterialsModel isOpen={addModalOpen} toggle={toggleAddModal} fetchMaterials={fetchMaterials} />
+      <UpdateMaterialsModel isOpen={updateModalOpen} toggle={toggleUpdateModal} material={selectedMaterial} fetchMaterials={fetchMaterials} />
     </div>
   )
 }
