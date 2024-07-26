@@ -1,48 +1,159 @@
-import React from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button,  FormGroup, Label, Input } from 'reactstrap'
+import React, { useState } from 'react'
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input, Form } from 'reactstrap'
+import { AddPlan } from '../../servirces/plan/PlanAPI'
+import { toast } from 'react-toastify'
 
 const PlanModel = ({ isOpen, toggle }) => {
+  const [formData, setFormData] = useState({
+    employeeName: '',
+    color: '',
+    size: '',
+    outputQty: '',
+    articleNo: '',
+    materials: [{ id: '', qty: '' }]
+  })
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  }
+
+  const handleMaterialChange = (index, e) => {
+    const { name, value } = e.target
+    const newMaterials = formData.materials.map((material, idx) => {
+      if (index === idx) {
+        return { ...material, [name]: value }
+      }
+      return material
+    })
+    setFormData({ ...formData, materials: newMaterials })
+  }
+
+  const addMaterialField = () => {
+    setFormData({ ...formData, materials: [...formData.materials, { id: '', qty: '' }] })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      // Adjusting the structure of the formData to match the API expected format
+      const response = await AddPlan(
+        formData.employeeName,
+        formData.color,
+        formData.size,
+        formData.outputQty,
+        formData.articleNo,
+        formData.materials
+      )
+      console.log('Plan added successfully:', response)
+      toast.success('Plan added successfully!')
+      // Optionally, handle successful addition (e.g., show a notification or refresh data)
+    } catch (error) {
+      console.error('Error adding Plan:', error)
+      toast.error('Error adding Plan. Please try again.')
+      // Optionally, handle errors (e.g., show an error message)
+    }
+
+    toggle()
+  }
+
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
-      <ModalHeader toggle={toggle}>Create New Plan</ModalHeader>
-
-      <ModalBody>
-       
-        <FormGroup>
-          <Label for="itemName">Item Name</Label>
-          <Input type="text" name="itemName" id="itemName" />
-        </FormGroup>
-        <FormGroup>
-          <Label for="quantity">Quantity</Label>
-          <Input type="number" name="quantity" id="quantity" />
-        </FormGroup>
-        <FormGroup>
-          <Label for="emplyeeName">Emplyee Name</Label>
-          <Input type="text" name="emplyeeName" id="emplyeeName" />
-        </FormGroup>
-        <FormGroup>
-          <Label for="date">Date</Label>
-          <Input type="date" name="date" id="date" />
-        </FormGroup>
-        <h4>Desired Output</h4>
-         <FormGroup>
-          <Label for="articleNo">Article No</Label>
-          <Input type="text" name="articleNo" id="articleNo" />
-        </FormGroup>
-        <FormGroup>
-          <Label for="color">Color</Label>
-          <Input type="text" name="color" id="color" />
-        </FormGroup>
-      </ModalBody>
-
-      <ModalFooter>
-        <Button color="primary" onClick={toggle}>
-          Add Plan
-        </Button>
-        <Button color="secondary" onClick={toggle}>
-          Cancel
-        </Button>
-      </ModalFooter>
+      <Form onSubmit={handleSubmit}>
+        <ModalHeader toggle={toggle}>Create New Plan</ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <Label for="employeeName">Employee Name</Label>
+            <Input
+              type="text"
+              name="employeeName"
+              id="employeeName"
+              value={formData.employeeName}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="color">Color</Label>
+            <Input
+              type="text"
+              name="color"
+              id="color"
+              value={formData.color}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="size">Size</Label>
+            <Input
+              type="text"
+              name="size"
+              id="size"
+              value={formData.size}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="outputQty">Output Quantity</Label>
+            <Input
+              type="number"
+              name="outputQty"
+              id="outputQty"
+              value={formData.outputQty}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="articleNo">Article No</Label>
+            <Input
+              type="text"
+              name="articleNo"
+              id="articleNo"
+              value={formData.articleNo}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <h5>Materials</h5>
+          {formData.materials.map((material, index) => (
+            <div key={index}>
+              <FormGroup>
+                <Label for={`materialId-${index}`}>Material ID</Label>
+                <Input
+                  type="text"
+                  name="id"
+                  id={`materialId-${index}`}
+                  value={material.id}
+                  onChange={(e) => handleMaterialChange(index, e)}
+                  required
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for={`materialQty-${index}`}>Quantity</Label>
+                <Input
+                  type="number"
+                  name="qty"
+                  id={`materialQty-${index}`}
+                  value={material.qty}
+                  onChange={(e) => handleMaterialChange(index, e)}
+                  required
+                />
+              </FormGroup>
+            </div>
+          ))}
+          <Button color="secondary" onClick={addMaterialField}>
+            Add Another Material
+          </Button>
+        </ModalBody>
+        <ModalFooter>
+          <Button type="submit" color="primary">Add Plan</Button>
+          <Button color="secondary" onClick={toggle}>Cancel</Button>
+        </ModalFooter>
+      </Form>
     </Modal>
   )
 }
