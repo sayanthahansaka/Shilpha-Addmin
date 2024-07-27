@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardBody, CardHeader, CardTitle, Table, Button, Input } from 'reactstrap'
 import ShopModal from './ShopModal'
+import { getAllOrders } from '../../servirces/orders/OrdersAPI'
 
 const Shop = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -9,37 +10,18 @@ const Shop = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedShop, setSelectedShop] = useState(null)
 
-  // Example fake data
-  const initialShops = [
-    {
-      shopID: 's001',
-      shopName: 'Nimal',
-      address: "123 Main St",
-      phoneNumber: "0752803235",
-      articleNo: "ABC123,3455",
-      colors: "Green,red",
-      sizes: "28",
-      price: "20500",
-      date: "2024-08-08",
-      done: false
-    },
-    {
-      shopID: 's002',
-      shopName: 'John Shop',
-      address: "456 Elm St",
-      phoneNumber: "1234567890",
-      articleNo: "DEF456",
-      colors: "Blue",
-      sizes: "32",
-      price: "3000",
-      date: "2024-07-14",
-      done: true
-    }
-  ]
-
   useEffect(() => {
-    setShops(initialShops)
-    setFilteredShops(initialShops)
+    const fetchShops = async () => {
+      try {
+        const orders = await getAllOrders() // Fetch data from API
+        setShops(orders)
+        setFilteredShops(orders)
+      } catch (error) {
+        console.error('Error fetching shops:', error)
+      }
+    }
+
+    fetchShops()
   }, [])
 
   const addShop = (newShop) => {
@@ -126,26 +108,23 @@ const Shop = () => {
           </thead>
           <tbody style={{ fontSize: "13px" }}>
             {filteredShops.map((shop) => (
-              <tr key={shop.shopID}>
-                <td>{shop.shopID}</td>
-                <td>{shop.shopName}</td>
+              <tr key={shop.id}> {/* Assuming 'id' is a unique identifier */}
+                <td>{shop.id}</td> {/* Assuming 'id' is the shop ID */}
+                <td>{shop.customerName}</td> {/* Adjust according to your API response */}
                 <td>{shop.address}</td>
-                <td>{shop.phoneNumber}</td>
-                <td>{shop.articleNo}</td>
-                <td>{shop.colors}</td>
-                <td>{shop.sizes}</td>
-                <td>{shop.price}</td>
-                <td>{shop.date}</td>
+                <td>{shop.contacts.map(contact => contact.contact).join(', ')}</td>
+                <td>{shop.ordersDetail.map(detail => detail.articleNo).join(', ')}</td>
+                <td>{shop.ordersDetail.map(detail => detail.color).join(', ')}</td>
+                <td>{shop.ordersDetail.map(detail => detail.size).join(', ')}</td>
+                <td>{shop.packagePrice}</td> {/* Adjust according to your API response */}
+                <td>{shop.createDate}</td>
                 <td>
-                  <Input
-                    type="checkbox"
-                    checked={shop.done}
-                    onChange={(event) => handleShopDoneChange(shop.shopID, event)}
+                  <Input type="checkbox" checked={shop.done} onChange={(event) => handleShopDoneChange(shop.id, event)}
                   />
                 </td>
                 <td>
                   <Button color="info" size="sm" onClick={() => handleOpenEditModal(shop)}>Edit</Button>{' '}
-                  <Button color="danger" size="sm" onClick={() => handleDeleteShop(shop.shopID)}>Delete</Button>
+                  <Button color="danger" size="sm" onClick={() => handleDeleteShop(shop.id)}>Delete</Button> {/* Adjust according to your API response */}
                 </td>
               </tr>
             ))}
@@ -156,4 +135,5 @@ const Shop = () => {
     </Card>
   )
 }
+
 export default Shop

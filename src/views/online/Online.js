@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table, Button, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import React, { useState, useEffect } from 'react'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button, Input } from 'reactstrap'
 import OrderModal from './OrderModal'
+import { getAllOnlineOrders } from '../../servirces/orders/OrdersAPI'
 
 const Online = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -10,37 +11,18 @@ const Online = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
 
-  // Example fake data (use an array of objects for multiple orders)
-  const initialOnlineOrders = [
-    {
-      orderID: 'o001',
-      customerName: 'Nimal',
-      address: "123 Main St",
-      phoneNumber: "0752803235",
-      articleNo: "ABC123",
-      color: "Green",
-      size: "28",
-      price: "2500",
-      date: "2024-08-08",
-      done: false
-    },
-    {
-      orderID: 'o002',
-      customerName: 'John Doe',
-      address: "456 Elm St",
-      phoneNumber: "1234567890",
-      articleNo: "DEF456",
-      color: "Blue",
-      size: "32",
-      price: "3000",
-      date: "2024-07-14",
-      done: true
+  useEffect(() => {
+    const fetchOnlineOrders = async () => {
+      try {
+        const orders = await getAllOnlineOrders() // Fetch data from API
+        setOnlineOrders(orders)
+        setFilteredOrders(orders)
+      } catch (error) {
+        console.error('Error fetching online orders:', error)
+      }
     }
-  ]
 
-  useState(() => {
-    setOnlineOrders(initialOnlineOrders)
-    setFilteredOrders(initialOnlineOrders)
+    fetchOnlineOrders()
   }, [])
 
   const addOrder = (newOrder) => {
@@ -79,7 +61,6 @@ const Online = () => {
     setFilteredOrders(updatedOrders)
     setIsEditModalOpen(false)
   }
-  
 
   const handleDeleteOrder = (orderID) => {
     const updatedOrders = onlineOrders.filter(order => order.orderID !== orderID)
@@ -87,10 +68,18 @@ const Online = () => {
     setFilteredOrders(updatedOrders)
   }
 
+  const handleOrderDoneChange = (orderID, event) => {
+    const updatedOrders = onlineOrders.map(order => (
+      order.orderID === orderID ? { ...order, done: event.target.checked } : order
+    ))
+    setOnlineOrders(updatedOrders)
+    setFilteredOrders(updatedOrders)
+  }
+
   return (
     <Card>
       <CardHeader>
-        <h1 style={{ color: "black" }}>Online Orders Manage</h1>
+        <h1 style={{ color: "black" }}>Online Orders Management</h1>
         <CardTitle style={{ display: "flex", gap: 25, alignItems: "center", justifyContent: "center" }}>
           <Input
             type="text"
@@ -98,7 +87,7 @@ const Online = () => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <Button color="success" size="sm" disabled={isAddModalOpen} onClick={handleOpenAddModal}>Add Order</Button>
+          <Button color="success" size="sm" onClick={handleOpenAddModal}>Add Order</Button>
         </CardTitle>
       </CardHeader>
       <CardBody>
@@ -121,19 +110,18 @@ const Online = () => {
           <tbody style={{ fontSize: "13px" }}>
             {filteredOrders.map((order) => (
               <tr key={order.orderID}>
-                <td>{order.orderID}</td>
-                <td>{order.customerName}</td>
+                 <td>{order.id}</td> {/* Assuming 'id' is the shop ID */}
+                <td>{order.customerName}</td> {/* Adjust according to your API response */}
                 <td>{order.address}</td>
-                <td>{order.phoneNumber}</td>
-                <td>{order.articleNo}</td>
-                <td>{order.color}</td>
-                <td>{order.size}</td>
-                <td>{order.price}</td>
-                <td>{order.date}</td>
+                <td>{order.contacts.map(contact => contact.contact).join(', ')}</td>
+                <td>{order.ordersDetail.map(detail => detail.articleNo).join(', ')}</td>
+                <td>{order.ordersDetail.map(detail => detail.color).join(', ')}</td>
+                <td>{order.ordersDetail.map(detail => detail.size).join(', ')}</td>
+                <td>{order.packagePrice}</td> {/* Adjust according to your API response */}
+                <td>{order.createDate}</td>
                 <td>
                   <Input
-                    type="radio"
-                    name={`orderDone_${order.orderID}`}
+                    type="checkbox"
                     checked={order.done}
                     onChange={(event) => handleOrderDoneChange(order.orderID, event)}
                   />
@@ -151,4 +139,5 @@ const Online = () => {
     </Card>
   )
 }
+
 export default Online

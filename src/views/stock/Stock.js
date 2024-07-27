@@ -14,8 +14,8 @@ const Stock = () => {
   const fetchStock = async () => {
     try {
       const mainStockData = await getAllStock(0, 10, 'main')
-      const onlineOrderStockData = await getAllStock(0, 10, 'online')
-      const shopStockData = await getAllStock(0, 10, 'shop')
+      const onlineOrderStockData = await getAllOnlineStock(0, 10, 'online')
+      const shopStockData = await getAllShopStock(0, 10, 'shop')
 
       setMainStock(mainStockData)
       setOnlineOrderStock(onlineOrderStockData)
