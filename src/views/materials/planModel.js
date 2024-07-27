@@ -37,7 +37,7 @@ const PlanModel = ({ isOpen, toggle }) => {
     e.preventDefault()
 
     try {
-      // Adjusting the structure of the formData to match the API expected format
+      
       const response = await AddPlan(
         formData.employeeName,
         formData.color,
@@ -48,11 +48,11 @@ const PlanModel = ({ isOpen, toggle }) => {
       )
       console.log('Plan added successfully:', response)
       toast.success('Plan added successfully!')
-      // Optionally, handle successful addition (e.g., show a notification or refresh data)
+      
     } catch (error) {
       console.error('Error adding Plan:', error)
       toast.error('Error adding Plan. Please try again.')
-      // Optionally, handle errors (e.g., show an error message)
+     
     }
 
     toggle()

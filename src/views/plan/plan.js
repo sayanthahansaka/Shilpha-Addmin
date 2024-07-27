@@ -1,75 +1,103 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table } from 'reactstrap'
-import { getAllPlans } from '../../servirces/plan/PlanAPI'  // Ensure the correct path to the API service
+import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
+import { getAllProcessingPlans, getAllDonePlans, submitPlanAsDone } from '../../servirces/plan/PlanAPI'
+import { toast } from 'react-toastify'
 
 const Plan = () => {
   const [processingPlans, setProcessingPlans] = useState([])
   const [donePlans, setDonePlans] = useState([])
 
-  useEffect(() => {
-    const fetchPlans = async () => {
-      const allPlans = await getAllPlans()
-      console.log("Fetched plan data:", allPlans)
-      
-      // Ensure plans have a `status` field before filtering
-      if (Array.isArray(allPlans)) {
-        const processing = allPlans.filter(plan => plan.process === 'processing')
-        const done = allPlans.filter(plan => plan.process === 'done')
-        console.log("Fetched plan data procees:", processing)
-        console.log("Fetched plan data done:", done)
-        setProcessingPlans(processing)
-        setDonePlans(done)
-      } else {
-        console.error("Unexpected data format:", allPlans)
-      }
-    }
+  const fetchPlans = async () => {
+    try {
+      // Fetch processing and done plans simultaneously
+      const [processingData, doneData] = await Promise.all([
+        getAllProcessingPlans(),
+        getAllDonePlans()
+      ])
 
+      console.log("Fetched processing plan data:", processingData)
+      console.log("Fetched done plan data:", doneData)
+
+      if (Array.isArray(processingData)) {
+        setProcessingPlans(processingData)
+      } else {
+        console.error("Unexpected processing data format:", processingData)
+      }
+
+      if (Array.isArray(doneData)) {
+        setDonePlans(doneData)
+      } else {
+        console.error("Unexpected done data format:", doneData)
+      }
+    } catch (error) {
+      console.error('Error fetching plans:', error)
+    }
+  }
+
+  useEffect(() => {
     fetchPlans()
   }, [])
+
+  const markAsDone = async (planId) => {
+    try {
+      await submitPlanAsDone(planId)
+      toast.success('Plan marked as done!')
+      fetchPlans()  // Refresh the plans data after marking as done
+    } catch (error) {
+      toast.error('Error marking plan as done. Please try again.')
+      console.error('Error marking plan as done:', error)
+    }
+  }
 
   return (
     <div className="stock-container">
       <Card>
         <CardHeader>
           <CardTitle>
-            <h3>Processing Plan</h3>
+            <h3>Processing Plans</h3>
           </CardTitle>
         </CardHeader>
         <CardBody>
           <Table bordered>
             <thead>
               <tr>
-                <th>Item Name</th>
+                <th>ID</th>
                 <th>Quantity</th>
                 <th>Employee Name</th>
                 <th>Start Date</th>
-                <th>
-                  Article No
-                  <br />
-                  <span style={{ fontSize: '0.8em' }}>(Desired output)</span>
-                </th>
-                <th>
-                  Color
-                  <br />
-                  <span style={{ fontSize: '0.8em' }}>(Desired output)</span>
-                </th>
+                <th>Article No</th>
+                <th>Color</th>
+                <th>Material Details</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {processingPlans.length > 0 ? processingPlans.map((plan, index) => (
                 <tr key={index}>
-                  <td>{plan.itemName || 'N/A'}</td>
-                  <td>{plan.quantity || 'N/A'}</td>
+                  <td>{plan.id || 'N/A'}</td>
+                  <td>{plan.outputQty || 'N/A'}</td>
                   <td>{plan.employeeName || 'N/A'}</td>
                   <td>{plan.createDate || 'N/A'}</td>
                   <td>{plan.articleNo || 'N/A'}</td>
                   <td>{plan.color || 'N/A'}</td>
-                  <td>{plan.status}</td>
+                  <td>
+                    <ul>
+                      {plan.planMaterialsStocks?.map((material, idx) => (
+                        <li key={idx}>
+                          {material.materialsStock?.materialName || 'N/A'}: {material.qty || 'N/A'}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td>{plan.process || 'N/A'}</td>
+                  <td>
+                    <Button color="primary" onClick={() => markAsDone(plan.id)}>Mark as Done</Button>
+                  </td>
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan="7" className="text-center">No processing plans</td>
+                  <td colSpan="9" className="text-center">No processing plans</td>
                 </tr>
               )}
             </tbody>
@@ -80,44 +108,46 @@ const Plan = () => {
       <Card>
         <CardHeader>
           <CardTitle>
-            <h3>Done Plan</h3>
+            <h3>Done Plans</h3>
           </CardTitle>
         </CardHeader>
         <CardBody>
           <Table bordered>
             <thead>
               <tr>
-                <th>Item Name</th>
+                <th>ID</th>
                 <th>Quantity</th>
                 <th>Employee Name</th>
                 <th>Start Date</th>
-                <th>
-                  Article No
-                  <br />
-                  <span style={{ fontSize: '0.8em' }}>(Desired output)</span>
-                </th>
-                <th>
-                  Color
-                  <br />
-                  <span style={{ fontSize: '0.8em' }}>(Desired output)</span>
-                </th>
+                <th>Article No</th>
+                <th>Color</th>
+                <th>Material Details</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
               {donePlans.length > 0 ? donePlans.map((plan, index) => (
                 <tr key={index}>
-                  <td>{plan.itemName || 'N/A'}</td>
-                  <td>{plan.quantity || 'N/A'}</td>
+                  <td>{plan.id || 'N/A'}</td>
+                  <td>{plan.outputQty || 'N/A'}</td>
                   <td>{plan.employeeName || 'N/A'}</td>
                   <td>{plan.createDate || 'N/A'}</td>
                   <td>{plan.articleNo || 'N/A'}</td>
                   <td>{plan.color || 'N/A'}</td>
-                  <td>{plan.status}</td>
+                  <td>
+                    <ul>
+                      {plan.planMaterialsStocks?.map((material, idx) => (
+                        <li key={idx}>
+                          {material.materialsStock?.materialName || 'N/A'}: {material.qty || 'N/A'}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td>{plan.process || 'N/A'}</td>
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan="7" className="text-center">No done plans</td>
+                  <td colSpan="8" className="text-center">No done plans</td>
                 </tr>
               )}
             </tbody>

@@ -1,7 +1,7 @@
 import Cookies from 'cookies-js'
 import apiService from '../apiService'
 
-export async function getAllPlans() {
+export async function getAllProcessingPlans() {
     let allData = []
     let page = 0
     const pageSize = 10
@@ -35,6 +35,42 @@ export async function getAllPlans() {
     console.log('All data:', allData)
     return allData
   }
+
+  export async function getAllDonePlans() {
+    let allData = []
+    let page = 0
+    const pageSize = 10
+    let moreData = true
+  
+    while (moreData) {
+      const apiObject = {
+        method: 'GET',
+        authentication: true,
+        endpoint: `plan/${page}/${pageSize}`,
+        body: null
+      }
+  
+      try {
+        const response = await apiService.callApi(apiObject)
+        console.log(`Full response for page ${page}:`, response)
+        const plan = response.data 
+  
+        if (plan && Array.isArray(plan) && plan.length > 0) {
+          allData = allData.concat(plan)
+          page += 1
+        } else {
+          moreData = false
+        }
+      } catch (error) {
+        console.error('Error fetching plan:', error)
+        moreData = false
+      }
+    }
+  
+    console.log('All data:', allData)
+    return allData
+  }
+
   export async function AddPlan(employeeName, color, size, outputQty, articleNo, materials) {
     // Construct the plan data object according to the API specification
     const planData = {
@@ -62,6 +98,27 @@ export async function getAllPlans() {
       return response
     } catch (error) {
       console.error('Error adding Plan:', error)
+      throw error
+    }
+  }
+
+  export async function submitPlanAsDone(planId) {
+    const apiObject = {
+      method: 'PUT',
+      authentication: true,
+      endpoint: `plan/?id=${planId}&status=done`,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: null  // No body needed for this request
+    }
+  
+    try {
+      const response = await apiService.callApi(apiObject)
+      console.log('Plan updated successfully:', response)
+      return response
+    } catch (error) {
+      console.error('Error updating plan status:', error)
       throw error
     }
   }
