@@ -1,5 +1,3 @@
-// src/views/online/OrderModal.js
-
 import React, { useState } from "react"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input, Row, Col } from "reactstrap"
 import { createOrder } from '../../servirces/orders/OrdersAPI'

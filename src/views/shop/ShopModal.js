@@ -1,84 +1,153 @@
-import React, { useState, useEffect } from "react"
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from "reactstrap"
+import React, { useState } from "react"
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input, Row, Col } from "reactstrap"
+import { createShopOrder } from '../../servirces/orders/OrdersAPI'
+import { toast } from 'react-toastify'
 
-const ShopModal = ({ isOpen, toggle, addShop, updateShop, shop }) => {
+const ShopModal = ({ isOpen, toggle, addShop }) => {
   const [formData, setFormData] = useState({
-    shopName: '',
+    customerName: '',
     address: '',
-    phoneNumber: '',
-    articleNo: '',
-    colors: '',
-    sizes: '',
-    price: '',
+    contacts: [{ contact: '' }],
+    ordersDetail: [{ articleNo: '', color: '', size: '', qty: '' }],
+    packagePrice: '',
+    stockPlaceStatus: 'shop',
     date: ''
   })
 
-  useEffect(() => {
-    if (shop) {
-      setFormData(shop)
-    } else {
-      setFormData({
-        shopName: '',
-        address: '',
-        phoneNumber: '',
-        articleNo: '',
-        colors: '',
-        sizes: '',
-        price: '',
-        date: ''
-      })
-    }
-  }, [shop])
-
   const handleChange = (event) => {
     const { id, value } = event.target
-    setFormData({ ...formData, [id]: value })
+    setFormData(prevState => ({
+      ...prevState,
+      [id]: value
+    }))
   }
 
-  const handleSubmit = () => {
-    if (shop) {
-      updateShop({ ...formData, shopID: shop.shopID })
-    } else {
-      const newShop = {
-        shopID: `s${Math.floor(Math.random() * 1000)}`, // Generate a unique shop ID
-        ...formData,
-        done: false // Assuming the shop is initially not done
-      }
-      addShop(newShop) // Call parent function to add new shop
+  const handleContactChange = (index, event) => {
+    const newContacts = formData.contacts.map((contact, i) => {
+      return i === index ? { ...contact, contact: event.target.value } : contact
+    })
+    setFormData(prevState => ({
+      ...prevState,
+      contacts: newContacts
+    }))
+  }
+
+  const handleOrderDetailChange = (index, field, value) => {
+    const newOrdersDetail = formData.ordersDetail.map((detail, i) => {
+      return i === index ? { ...detail, [field]: value } : detail
+    })
+    setFormData(prevState => ({
+      ...prevState,
+      ordersDetail: newOrdersDetail
+    }))
+  }
+
+  const addContactField = () => {
+    setFormData(prevState => ({
+      ...prevState,
+      contacts: [...prevState.contacts, { contact: '' }]
+    }))
+  }
+
+  const addOrderDetailField = () => {
+    setFormData(prevState => ({
+      ...prevState,
+      ordersDetail: [...prevState.ordersDetail, { articleNo: '', color: '', size: '', qty: '' }]
+    }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault() 
+    try {
+      const newOrder = await createShopOrder(formData)
+      addShop(newOrder) 
+      toast.success("Order created successfully!")
+      toggle() 
+    } catch (error) {
+      toast.error("Failed to create order.")
+      console.error('Error creating order:', error)
     }
   }
-
+  
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
-      <ModalHeader>{shop ? "Edit Shop" : "Add Shop"}</ModalHeader>
+      <ModalHeader toggle={toggle}>Add Order</ModalHeader>
       <ModalBody>
         <FormGroup>
-          <Label for="shopName">Shop Name</Label>
-          <Input type="text" id="shopName" value={formData.shopName} onChange={handleChange} />
+          <Label for="customerName">Customer Name</Label>
+          <Input type="text" id="customerName" value={formData.customerName} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
           <Label for="address">Address</Label>
           <Input type="text" id="address" value={formData.address} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
-          <Label for="phoneNumber">Phone Number</Label>
-          <Input type="text" id="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
+          <Label>Contacts</Label>
+          {formData.contacts.map((contact, index) => (
+            <Input
+              key={index}
+              type="text"
+              value={contact.contact}
+              onChange={(e) => handleContactChange(index, e)}
+              placeholder="Contact Number"
+              style={{ marginBottom: "10px" }}
+            />
+          ))}
+          <Button color="secondary" size="sm" onClick={addContactField}>Add Contact</Button>
         </FormGroup>
         <FormGroup>
-          <Label for="articleNo">Article Number</Label>
-          <Input type="text" id="articleNo" value={formData.articleNo} onChange={handleChange} />
+          <Label>Order Details</Label>
+          {formData.ordersDetail.map((detail, index) => (
+            <Row key={index}>
+              <Col>
+                <Input
+                  type="text"
+                  placeholder="Article Number"
+                  value={detail.articleNo}
+                  onChange={(e) => handleOrderDetailChange(index, 'articleNo', e.target.value)}
+                />
+              </Col>
+              <Col>
+                <Input
+                  type="text"
+                  placeholder="Color"
+                  value={detail.color}
+                  onChange={(e) => handleOrderDetailChange(index, 'color', e.target.value)}
+                />
+              </Col>
+              <Col>
+                <Input
+                  type="text"
+                  placeholder="Size"
+                  value={detail.size}
+                  onChange={(e) => handleOrderDetailChange(index, 'size', e.target.value)}
+                />
+              </Col>
+              <Col>
+                <Input
+                  type="text"
+                  placeholder="Quantity"
+                  value={detail.qty}
+                  onChange={(e) => handleOrderDetailChange(index, 'qty', e.target.value)}
+                />
+              </Col>
+            </Row>
+          ))}
+          <Button color="secondary" size="sm" onClick={addOrderDetailField} style={{ marginTop: "10px" }}>
+            Add Order Detail
+          </Button>
         </FormGroup>
         <FormGroup>
-          <Label for="colors">Colors</Label>
-          <Input type="text" id="colors" value={formData.colors} onChange={handleChange} />
+          <Label for="packagePrice">Package Price</Label>
+          <Input type="text" id="packagePrice" value={formData.packagePrice} onChange={handleChange} />
         </FormGroup>
+        {/* <FormGroup>
+          <Label for="deliveryFree">Delivery Fee</Label>
+          <Input type="text" id="deliveryFree" value={formData.deliveryFree} onChange={handleChange} />
+        </FormGroup> */}
         <FormGroup>
-          <Label for="sizes">Sizes</Label>
-          <Input type="text" id="sizes" value={formData.sizes} onChange={handleChange} />
-        </FormGroup>
-        <FormGroup>
-          <Label for="price">Price</Label>
-          <Input type="text" id="price" value={formData.price} onChange={handleChange} />
+          <Label for="stockPlaceStatus">Stock Place Status</Label>
+          <Input type="text" id="stockPlaceStatus" value={formData.stockPlaceStatus} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
           <Label for="date">Date</Label>
@@ -86,12 +155,8 @@ const ShopModal = ({ isOpen, toggle, addShop, updateShop, shop }) => {
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={handleSubmit}>
-          {shop ? "Update" : "Submit"}
-        </Button>{" "}
-        <Button color="secondary" onClick={toggle}>
-          Cancel
-        </Button>
+        <Button color="primary" onClick={handleSubmit}>Submit</Button>
+        <Button color="secondary" onClick={toggle}>Cancel</Button>
       </ModalFooter>
     </Modal>
   )
