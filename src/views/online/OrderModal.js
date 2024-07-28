@@ -1,35 +1,80 @@
+// src/views/online/OrderModal.js
+
 import React, { useState } from "react"
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from "reactstrap"
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input, Row, Col } from "reactstrap"
+import { createOrder } from '../../servirces/orders/OrdersAPI'
+import { toast } from 'react-toastify'
 
 const OrderModal = ({ isOpen, toggle, addOrder }) => {
   const [formData, setFormData] = useState({
     customerName: '',
     address: '',
-    phoneNumber: '',
-    articleNo: '',
-    color: '',
-    size: '',
-    price: '',
+    contacts: [{ contact: '' }],
+    ordersDetail: [{ articleNo: '', color: '', size: '', qty: '' }],
+    packagePrice: '',
+    deliveryFree: '',
+    stockPlaceStatus: 'online',
     date: ''
   })
 
   const handleChange = (event) => {
     const { id, value } = event.target
-    setFormData({ ...formData, [id]: value })
+    setFormData(prevState => ({
+      ...prevState,
+      [id]: value
+    }))
   }
 
-  const handleSubmit = () => {
-    const newOrder = {
-      orderID: `o${Math.floor(Math.random() * 1000)}`, // Generate a unique order ID
-      ...formData,
-      done: false // Assuming the order is initially not done
+  const handleContactChange = (index, event) => {
+    const newContacts = formData.contacts.map((contact, i) => {
+      return i === index ? { ...contact, contact: event.target.value } : contact
+    })
+    setFormData(prevState => ({
+      ...prevState,
+      contacts: newContacts
+    }))
+  }
+
+  const handleOrderDetailChange = (index, field, value) => {
+    const newOrdersDetail = formData.ordersDetail.map((detail, i) => {
+      return i === index ? { ...detail, [field]: value } : detail
+    })
+    setFormData(prevState => ({
+      ...prevState,
+      ordersDetail: newOrdersDetail
+    }))
+  }
+
+  const addContactField = () => {
+    setFormData(prevState => ({
+      ...prevState,
+      contacts: [...prevState.contacts, { contact: '' }]
+    }))
+  }
+
+  const addOrderDetailField = () => {
+    setFormData(prevState => ({
+      ...prevState,
+      ordersDetail: [...prevState.ordersDetail, { articleNo: '', color: '', size: '', qty: '' }]
+    }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault() 
+    try {
+      const newOrder = await createOrder(formData)
+      addOrder(newOrder) 
+      toast.success("Order created successfully!")
+      toggle() 
+    } catch (error) {
+      toast.error("Failed to create order.")
+      console.error('Error creating order:', error)
     }
-    addOrder(newOrder) // Call parent function to add new order
   }
 
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
-      <ModalHeader>Add Request</ModalHeader>
+      <ModalHeader toggle={toggle}>Add Order</ModalHeader>
       <ModalBody>
         <FormGroup>
           <Label for="customerName">Customer Name</Label>
@@ -40,24 +85,72 @@ const OrderModal = ({ isOpen, toggle, addOrder }) => {
           <Input type="text" id="address" value={formData.address} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
-          <Label for="phoneNumber">Phone Number</Label>
-          <Input type="text" id="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
+          <Label>Contacts</Label>
+          {formData.contacts.map((contact, index) => (
+            <Input
+              key={index}
+              type="text"
+              value={contact.contact}
+              onChange={(e) => handleContactChange(index, e)}
+              placeholder="Contact Number"
+              style={{ marginBottom: "10px" }}
+            />
+          ))}
+          <Button color="secondary" size="sm" onClick={addContactField}>Add Contact</Button>
         </FormGroup>
         <FormGroup>
-          <Label for="articleNo">Article Number</Label>
-          <Input type="text" id="articleNo" value={formData.articleNo} onChange={handleChange} />
+          <Label>Order Details</Label>
+          {formData.ordersDetail.map((detail, index) => (
+            <Row key={index}>
+              <Col>
+                <Input
+                  type="text"
+                  placeholder="Article Number"
+                  value={detail.articleNo}
+                  onChange={(e) => handleOrderDetailChange(index, 'articleNo', e.target.value)}
+                />
+              </Col>
+              <Col>
+                <Input
+                  type="text"
+                  placeholder="Color"
+                  value={detail.color}
+                  onChange={(e) => handleOrderDetailChange(index, 'color', e.target.value)}
+                />
+              </Col>
+              <Col>
+                <Input
+                  type="text"
+                  placeholder="Size"
+                  value={detail.size}
+                  onChange={(e) => handleOrderDetailChange(index, 'size', e.target.value)}
+                />
+              </Col>
+              <Col>
+                <Input
+                  type="text"
+                  placeholder="Quantity"
+                  value={detail.qty}
+                  onChange={(e) => handleOrderDetailChange(index, 'qty', e.target.value)}
+                />
+              </Col>
+            </Row>
+          ))}
+          <Button color="secondary" size="sm" onClick={addOrderDetailField} style={{ marginTop: "10px" }}>
+            Add Order Detail
+          </Button>
         </FormGroup>
         <FormGroup>
-          <Label for="color">Color</Label>
-          <Input type="text" id="color" value={formData.color} onChange={handleChange} />
+          <Label for="packagePrice">Package Price</Label>
+          <Input type="text" id="packagePrice" value={formData.packagePrice} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
-          <Label for="size">Size</Label>
-          <Input type="text" id="size" value={formData.size} onChange={handleChange} />
+          <Label for="deliveryFree">Delivery Fee</Label>
+          <Input type="text" id="deliveryFree" value={formData.deliveryFree} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
-          <Label for="price">Price</Label>
-          <Input type="text" id="price" value={formData.price} onChange={handleChange} />
+          <Label for="stockPlaceStatus">Stock Place Status</Label>
+          <Input type="text" id="stockPlaceStatus" value={formData.stockPlaceStatus} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
           <Label for="date">Date</Label>
@@ -65,12 +158,8 @@ const OrderModal = ({ isOpen, toggle, addOrder }) => {
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={handleSubmit}>
-          Submit
-        </Button>{" "}
-        <Button color="secondary" onClick={toggle}>
-          Cancel
-        </Button>
+        <Button color="primary" onClick={handleSubmit}>Submit</Button>
+        <Button color="secondary" onClick={toggle}>Cancel</Button>
       </ModalFooter>
     </Modal>
   )
