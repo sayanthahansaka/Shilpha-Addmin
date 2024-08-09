@@ -74,17 +74,17 @@ export async function getAllmaterials() {
 //     }
 //   }
 
-export async function AddMaterial(materialName, qty, supplier) {
+export async function AddMaterial(materialName, qty, color) {
   const materialData = {
     materialName,
     qty,
-    supplier
+    color
   }
 
   const apiObject = {
     method: 'POST',
     authentication: true, // Ensure this is handled by your ApiService
-    endpoint: 'materials/',
+    endpoint: 'materials',
     headers: {
       'Content-Type': 'application/json' // Setting content type for JSON payload
     },
@@ -101,58 +101,81 @@ export async function AddMaterial(materialName, qty, supplier) {
   }
 }
 
-export async function updateMaterial(id, qty, supplier) {
-    // Create a FormData object
-    const formData = new FormData()
-    formData.append('id', id)
-    formData.append('qty', qty)
-    formData.append('supplier', supplier)
-  
+export async function updateMaterial(id, materialName, qty) {
+  // Create the data object
+  const data = {
+    id,
+    materialName,
+    qty
+  }
+
+  const apiObject = {
+    method: 'PUT',
+    authentication: true,
+    endpoint: `materials`, // Ensure the endpoint includes the material ID if necessary
+    headers: {
+      'Content-Type': 'application/json' // Set Content-Type to application/json
+    },
+    body: JSON.stringify(data) // Convert the data object to a JSON string
+  }
+
+  try {
+    const response = await apiService.callApi(apiObject)
+    console.log('Material updated successfully:', response)
+    return response
+  } catch (error) {
+    console.error('Error updating material:', error)
+    throw error
+  }
+}
+
+export const getMaterialHistory = async (materialId) => {
+  console.log(materialId)
+  let allHistory = []
+  let page = 0
+  const pageSize = 10
+  let moreData = true
+  const id = materialId
+  const start = "2024-07-01"
+  const end = "2024-09-01"
+
+  const materialDataHistory = {
+    id,
+    start,
+    end
+  }
+  console.log(JSON.stringify(materialDataHistory))
+
+  while (moreData) {
     const apiObject = {
-      method: 'PUT',
-      authentication: true, // Ensure this is handled by your ApiService
-      endpoint: 'materials/', // Endpoint without ID in the URL
+      method: 'GET', // Change to POST
+      authentication: true,
+      endpoint: `materials/history/${page}/${pageSize}`,
       headers: {
-        // 'Authorization': `Bearer <your-token-here>` // Replace with your actual token
-        'Content-Type': 'multipart/form-data' // Not required; FormData sets this automatically
+        'Content-Type': 'application/json'
+        // 'Authorization': `Bearer <token>` // Add your token here
       },
-      body: formData
+      body: JSON.stringify(materialDataHistory) // Include body in the request
     }
-  
+
     try {
       const response = await apiService.callApi(apiObject)
-      console.log('Material updated successfully:', response)
-      return response
+      console.log(`Full response for page ${page}:`, response)
+
+      const history = response.data?.data // Use optional chaining to handle cases where response.data might be null
+
+      if (history && Array.isArray(history) && history.length > 0) {
+        allHistory = allHistory.concat(history)
+        page += 1
+      } else {
+        moreData = false
+      }
     } catch (error) {
-      console.error('Error updating material:', error)
-      throw error
+      console.error('Error fetching material history:', error)
+      moreData = false
     }
-  }  
+  }
 
-// export async function getVerifiedShop(pageNo, pageCount, isVerify) {
-//   const apiObject = {}
-//   apiObject.method = 'GET'
-//   apiObject.authentication = true
-//   apiObject.endpoint = `shop/getAllAdminVerifiedShopAndVerificationPendingShop/${pageNo}/${pageCount}/${isVerify}`
-//   apiObject.type = 'SHOP_VERIFICATION'
-//   apiObject.body = null
-//   return await ApiService.callApi(apiObject)
-
-// }
-
-// export async function ShopVerificationUpdate(shopId, status) {
-//   const formData = new FormData()
-//   formData.append('shopId', shopId)
-//   formData.append('status', status)
-
-//   const apiObject = {
-//     method: 'POST',
-//     authentication: true,
-//     endpoint: 'shop/adminShopVerificationUpdate',
-//     type: 'SHOP_VERIFICATION_UPDATE',
-//     body: formData,
-//     multipart: true // Specify that the request is multipart/form-data
-//   }
-
-//   return await ApiService.callApi(apiObject)
-// }
+  console.log('All history:', allHistory) // Log the aggregated data
+  return allHistory
+}

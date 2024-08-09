@@ -3,6 +3,7 @@ import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap
 import { Archive } from 'react-feather'
 import PlanModel from './planModel'
 import AddMaterialsModel from './AddMaterialsModel'
+import MaterialsHistoryModel from './MaterialsHistoryModel'
 import UpdateMaterialsModel from './UpdateMaterialsModel'
 import { getAllmaterials } from '../../servirces/materials/MaterialsAPI'
 
@@ -11,6 +12,7 @@ const Materials = () => {
   const [planModalOpen, setPlanModalOpen] = useState(false)
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [updateModalOpen, setUpdateModalOpen] = useState(false)
+  const [historyModelOpen, sethistoryModelOpen] = useState(false)
   const [selectedMaterial, setSelectedMaterial] = useState(null)
 
   const fetchMaterials = async () => {
@@ -26,6 +28,7 @@ const Materials = () => {
   const togglePlanModal = () => setPlanModalOpen(!planModalOpen)
   const toggleAddModal = () => setAddModalOpen(!addModalOpen)
   const toggleUpdateModal = () => setUpdateModalOpen(!updateModalOpen)
+  const toggleHistoryModel = () => sethistoryModelOpen(!historyModelOpen)
 
   const openUpdateModalWithMaterial = (material) => {
     setSelectedMaterial(material)
@@ -53,7 +56,7 @@ const Materials = () => {
                 <th>ID</th>
                 <th>Material Name</th>
                 <th>Quantity</th>
-                <th>Supplier</th>
+                <th>Color</th>
                 <th>Create Date</th>
                 <th></th>
               </tr>
@@ -64,15 +67,24 @@ const Materials = () => {
                   <td>{item.id}</td>
                   <td>{item.materialName}</td>
                   <td>{item.qty}</td>
-                  <td>{item.supplier}</td>
+                  <td>{item.color}</td>
                   <td>{item.createDate}</td>
                   <td>
                     <Button
                       onClick={() => openUpdateModalWithMaterial(item)}
-                      style={{ backgroundColor: 'yellow' }}
+                     color="success"
                     >
                       Update Material
                     </Button>
+                    <Button
+                      onClick={() => {
+                        setSelectedMaterial(item) // Set the selected material
+                        toggleHistoryModel()      // Open the history modal
+                      }}
+                      color="secondary"
+                    >
+                      View
+                  </Button>
                   </td>
                 </tr>
               ))}
@@ -80,7 +92,9 @@ const Materials = () => {
           </Table>
         </CardBody>
       </Card>
-
+      
+      <MaterialsHistoryModel isOpen={historyModelOpen} toggle={toggleHistoryModel}  materialId={selectedMaterial?.id} />
+      {/* <MaterialsHistoryModel isOpen={historyModelOpen} toggle={toggleHistoryModel}></MaterialsHistoryModel> */}
       <PlanModel isOpen={planModalOpen} toggle={togglePlanModal} />
       <AddMaterialsModel isOpen={addModalOpen} toggle={toggleAddModal} fetchMaterials={fetchMaterials} />
       <UpdateMaterialsModel isOpen={updateModalOpen} toggle={toggleUpdateModal} material={selectedMaterial} fetchMaterials={fetchMaterials} />

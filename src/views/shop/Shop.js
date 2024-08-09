@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table, Button, Input } from 'reactstrap'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
 import ShopModal from './ShopModal'
 import { getAllShopOrders, markOrderAsDone, getAllDoneShopOrders } from '../../servirces/orders/OrdersAPI'
 
 const Shop = () => {
   const [processingShops, setProcessingShops] = useState([])
   const [doneShops, setDoneShops] = useState([])
-  const [searchTerm, setSearchTerm] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const fetchOrders = async () => {
@@ -29,16 +28,11 @@ const Shop = () => {
 
   const handleMarkAsDone = async (shopID) => {
     try {
-     
       await markOrderAsDone(shopID, 'shop')
       fetchOrders() // Refresh the data
     } catch (error) {
       console.error('Error marking shop as done:', error)
     }
-  }
-
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value)
   }
 
   const toggleAddModal = () => setIsModalOpen(!isModalOpen)
@@ -47,11 +41,6 @@ const Shop = () => {
     setProcessingShops(prevShops => [...prevShops, newShop])
   }
 
-  const filteredProcessingShops = processingShops.filter(shop => shop.customerName.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-  const filteredDoneShops = doneShops.filter(shop => shop.customerName.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
   return (
     <div className="shops-container">
       <Card>
@@ -59,13 +48,6 @@ const Shop = () => {
           <CardTitle>
             <h3>Processing Shop Orders</h3>
           </CardTitle>
-          <Input
-            type="text"
-            placeholder="Search by Shop Name"
-            value={searchTerm}
-            onChange={handleSearch}
-            style={{ width: '300px', margin: '10px 0' }}
-          />
           <Button color="success" onClick={toggleAddModal} style={{ float: 'right' }}>
             Add New Shop
           </Button>
@@ -87,15 +69,15 @@ const Shop = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredProcessingShops.length > 0 ? filteredProcessingShops.map((shop) => (
+              {processingShops.length > 0 ? processingShops.map((shop) => (
                 <tr key={shop.id}>
                   <td>{shop.id}</td>
                   <td>{shop.customerName}</td>
                   <td>{shop.address}</td>
-                  <td>{shop.contacts.map(contact => contact.contact).join(', ')}</td>
-                  <td>{shop.ordersDetail.map(detail => detail.articleNo).join(', ')}</td>
-                  <td>{shop.ordersDetail.map(detail => detail.color).join(', ')}</td>
-                  <td>{shop.ordersDetail.map(detail => detail.size).join(', ')}</td>
+                  <td>{shop.contacts && shop.contacts.map(contact => contact.contact).join(', ')}</td>
+                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.articleNo).join(', ')}</td>
+                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.color).join(', ')}</td>
+                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.size).join(', ')}</td>
                   <td>{shop.packagePrice}</td>
                   <td>{shop.createDate}</td>
                   <td>
@@ -134,15 +116,15 @@ const Shop = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredDoneShops.length > 0 ? filteredDoneShops.map((shop) => (
+              {doneShops.length > 0 ? doneShops.map((shop) => (
                 <tr key={shop.id}>
                   <td>{shop.id}</td>
                   <td>{shop.customerName}</td>
                   <td>{shop.address}</td>
-                  <td>{shop.contacts.map(contact => contact.contact).join(', ')}</td>
-                  <td>{shop.ordersDetail.map(detail => detail.articleNo).join(', ')}</td>
-                  <td>{shop.ordersDetail.map(detail => detail.color).join(', ')}</td>
-                  <td>{shop.ordersDetail.map(detail => detail.size).join(', ')}</td>
+                  <td>{shop.contacts && shop.contacts.map(contact => contact.contact).join(', ')}</td>
+                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.articleNo).join(', ')}</td>
+                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.color).join(', ')}</td>
+                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.size).join(', ')}</td>
                   <td>{shop.packagePrice}</td>
                   <td>{shop.createDate}</td>
                 </tr>

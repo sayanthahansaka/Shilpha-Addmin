@@ -70,22 +70,27 @@ export async function getAllProcessingPlans() {
     console.log('All data:', allData)
     return allData
   }
-
-  export async function AddPlan(employeeName, color, size, outputQty, articleNo, materials) {
+  export async function AddPlan(formData) {
     // Construct the plan data object according to the API specification
     const planData = {
-      employeeName,
-      color,
-      size,
-      outputQty,
-      articleNo,
-      materials
+      employeeName: formData.employeeName,
+      planingStocks: formData.planingStocks.map(stock => ({
+        articleNo: stock.articleNo,
+        color: stock.color,
+        size: stock.size,
+        insoleMaterialId: stock.insoleMaterialId,
+        insoleQty: stock.insoleQty
+      })),
+      materials: formData.materials.map(material => ({
+        id: material.id,
+        qty: material.qty
+      }))
     }
-  
+  console.log(planData)
     const apiObject = {
       method: 'POST',
       authentication: true,
-      endpoint: 'plan/',
+      endpoint: 'plan/', // Ensure this is the correct endpoint for your API
       headers: {
         'Content-Type': 'application/json'
       },
@@ -101,7 +106,43 @@ export async function getAllProcessingPlans() {
       throw error
     }
   }
-
+  
+  // export async function AddPlan(employeeName, color, size, outputQty, articleNo, materials) {
+  //   // Construct the plan data object according to the API specification
+  //   const planData = {
+  //     employeeName,
+  //     planingStocks: [
+  //       {
+  //         articleNo, // Assuming a single planing stock for now, adjust if needed
+  //         color,
+  //         size,
+  //         insoleMaterialId: '', // Add default or fetched value
+  //         insoleQty: outputQty // Adjust if needed
+  //       }
+  //     ],
+  //     materials // Directly use the materials array provided
+  //   }
+  
+  //   const apiObject = {
+  //     method: 'POST',
+  //     authentication: true,
+  //     endpoint: 'plan/', // Ensure this is the correct endpoint for your API
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify(planData)
+  //   }
+  
+  //   try {
+  //     const response = await apiService.callApi(apiObject)
+  //     console.log('Plan added successfully:', response)
+  //     return response
+  //   } catch (error) {
+  //     console.error('Error adding Plan:', error)
+  //     throw error
+  //   }
+  // }
+  
   export async function submitPlanAsDone(planId) {
     const apiObject = {
       method: 'PUT',

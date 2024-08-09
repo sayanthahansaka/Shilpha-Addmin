@@ -3,7 +3,7 @@ import { Card, CardHeader, CardBody, CardTitle, CardText, CardLink } from 'react
 const Home = () => {
   return (
     <div>
-      <h1>yooooooooooooo</h1>
+      <h1>Welcome Shilpha Admin</h1>
     </div>
   )
 }

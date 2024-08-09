@@ -5,9 +5,9 @@ import { toast } from 'react-toastify'
 
 const UpdateMaterialsModel = ({ isOpen, toggle, material, fetchMaterials }) => {
   const [formData, setFormData] = useState({
+    id:'',
     materialName: '',
-    qty: '',
-    supplier: ''
+    qty: ''
   })
 
   useEffect(() => {
@@ -31,9 +31,9 @@ const UpdateMaterialsModel = ({ isOpen, toggle, material, fetchMaterials }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await updateMaterial(material.id, formData.materialName, formData.qty, formData.supplier)
+      await updateMaterial(material.id, formData.materialName, formData.qty)
       toast.success('Material updated successfully!')
-      fetchMaterials() // Refresh the table data
+      fetchMaterials()
       toggle()
     } catch (error) {
       console.error('Error updating material:', error)
@@ -48,14 +48,7 @@ const UpdateMaterialsModel = ({ isOpen, toggle, material, fetchMaterials }) => {
         <ModalBody>
           <FormGroup>
             <Label for="materialName">Material Name</Label>
-            <Input
-              type="text"
-              name="materialName"
-              id="materialName"
-              value={formData.materialName}
-              onChange={handleChange}
-              required
-            />
+           
           </FormGroup>
           <FormGroup>
             <Label for="qty">Quantity</Label>
@@ -68,7 +61,7 @@ const UpdateMaterialsModel = ({ isOpen, toggle, material, fetchMaterials }) => {
               required
             />
           </FormGroup>
-          <FormGroup>
+          {/* <FormGroup>
             <Label for="supplier">Supplier</Label>
             <Input
               type="text"
@@ -78,7 +71,7 @@ const UpdateMaterialsModel = ({ isOpen, toggle, material, fetchMaterials }) => {
               onChange={handleChange}
               required
             />
-          </FormGroup>
+          </FormGroup> */}
         </ModalBody>
         <ModalFooter>
           <Button type="submit" color="primary">Update Material</Button>

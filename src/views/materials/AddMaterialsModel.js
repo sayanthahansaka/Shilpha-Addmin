@@ -7,7 +7,7 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
   const [formData, setFormData] = useState({
     materialName: '',
     qty: '',
-    supplier: ''
+    color: ''
   })
 
   const handleChange = (e) => {
@@ -21,7 +21,7 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await AddMaterial(formData.materialName, formData.qty, formData.supplier)
+      await AddMaterial(formData.materialName, formData.qty, formData.color)
       toast.success('Material added successfully!')
       fetchMaterials() // Refresh the table data
       toggle()
@@ -45,8 +45,8 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
             <Input type="number" name="qty" id="qty" value={formData.qty} onChange={handleChange} required />
           </FormGroup>
           <FormGroup>
-            <Label for="supplier">Supplier</Label>
-            <Input type="text" name="supplier" id="supplier" value={formData.supplier} onChange={handleChange} required />
+            <Label for="color">color</Label>
+            <Input type="text" name="color" id="color" value={formData.color} onChange={handleChange} required />
           </FormGroup>
         </ModalBody>
         <ModalFooter>
