@@ -132,4 +132,57 @@ export async function getAllStock() {
       throw error
     }
   }
-  
+export const updateStock = async (id, qty, color, stockPlace) => {
+  const data = {
+    id, 
+    qty, 
+    color, 
+    stockPlace
+  }
+  const apiObject = {
+    method: 'PUT',
+    authentication: true,
+    endpoint: `stock`,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  }
+
+  try {
+    const response = await apiService.callApi(apiObject)
+    return response.data
+  } catch (error) {
+    console.error('Error updating stock:', error)
+    throw error
+  }
+}
+
+export async function addStock(articleNo, color, size, qty, stockPlace = 'main') {
+  const stockData = {
+    articleNo,
+    color,
+    size,
+    qty,
+    stockPlace
+  }
+
+  const apiObject = {
+    method: 'POST',
+    authentication: true, 
+    endpoint: 'stock', 
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(stockData) 
+  }
+
+  try {
+    const response = await apiService.callApi(apiObject)
+    console.log('Stock added successfully:', response)
+    return response
+  } catch (error) {
+    console.error('Error adding stock:', error)
+    throw error
+  }
+}

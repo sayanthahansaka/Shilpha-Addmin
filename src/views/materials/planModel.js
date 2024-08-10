@@ -150,9 +150,9 @@ const PlanModel = ({ isOpen, toggle }) => {
               </FormGroup>
             </div>
           ))}
-          {/* <Button color="secondary" onClick={addPlaningStockField}>
+          <Button color="secondary" onClick={addPlaningStockField}>
             Add Another Planing Stock
-          </Button> */}
+          </Button>
           <h5>Materials</h5>
           {formData.materials.map((material, index) => (
             <div key={index}>

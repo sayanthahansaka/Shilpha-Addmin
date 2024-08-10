@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
-import { transferStock } from '../../servirces/stock/StockAPI'
+import { updateStock } from '../../servirces/stock/StockAPI'
 import { toast } from 'react-toastify'
 
 const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
+  console.log("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm : ", stock)
   const [formData, setFormData] = useState({
     id: '',
-    qty: ''
+    qty: '',
+    color: '',
+    stockPlace: 'main'
   })
+ 
 
   useEffect(() => {
     if (stock) {
       setFormData({
         id: stock.id || '',
-        qty: stock.qty || ''
+        qty: stock.qty || '',
+        color: stock.color || '',
+        stockPlace: stock.stockPlace || 'main' // default to 'main'
       })
     }
   }, [stock])
@@ -29,7 +35,7 @@ const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await updateStock(formData.id, formData.qty)
+      await updateStock(formData.id, formData.qty, formData.color, formData.stockPlace)
       toast.success('Stock updated successfully!')
       fetchStocks()
       toggle()
@@ -51,6 +57,28 @@ const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
               name="qty"
               id="qty"
               value={formData.qty}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="color">Color</Label>
+            <Input
+              type="text"
+              name="color"
+              id="color"
+              value={formData.color}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="stockPlace">Stock Place</Label>
+            <Input
+              type="text"
+              name="stockPlace"
+              id="stockPlace"
+              value={formData.stockPlace}
               onChange={handleChange}
               required
             />

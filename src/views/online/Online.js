@@ -1,35 +1,46 @@
-// src/views/online/Online.js
-
 import React, { useState, useEffect } from 'react'
 import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
-import { getAllOnlineOrders, getAllDoneOnlineOrders, markOrderAsDone } from '../../servirces/orders/OrdersAPI'
+import { getAllOnlineOrders, getAllDoneOnlineOrders, markOrderAsDone, markOrderAsReturn, getAllReturnOnlineOrders } from '../../servirces/orders/OrdersAPI'
 import OrderModal from './OrderModal'
 import { toast } from 'react-toastify'
 
 const Online = () => {
   const [processingOrders, setProcessingOrders] = useState([])
   const [doneOrders, setDoneOrders] = useState([])
+  const [returnOrders, setReturnOrders] = useState([])
   const [addModalOpen, setAddModalOpen] = useState(false)
 
   const fetchOrders = async () => {
     try {
-      const [processingData, doneData] = await Promise.all([
+      const [processingData, doneData, returnData] = await Promise.all([
         getAllOnlineOrders(),
-        getAllDoneOnlineOrders()
+        getAllDoneOnlineOrders(),
+        getAllReturnOnlineOrders() // Added to fetch return orders
       ])
 
       if (Array.isArray(processingData)) {
         setProcessingOrders(processingData)
       } else {
+        toast.error("Unexpected processing data format:", processingData)
         console.error("Unexpected processing data format:", processingData)
       }
 
       if (Array.isArray(doneData)) {
         setDoneOrders(doneData)
       } else {
+        toast.error("Unexpected done data format:", doneData)
         console.error("Unexpected done data format:", doneData)
       }
+
+      if (Array.isArray(returnData)) {
+        setReturnOrders(returnData) // Set return orders state
+      } else {
+        toast.error("Unexpected return data format:", returnData)
+        console.error("Unexpected return data format:", returnData)
+      }
+      
     } catch (error) {
+      toast.error('Error fetching orders:', error)
       console.error('Error fetching orders:', error)
     }
   }
@@ -43,7 +54,18 @@ const Online = () => {
       await markOrderAsDone(orderId, 'online')
       fetchOrders()
     } catch (error) {
+      toast.error('Error marking order as done:', error)
       console.error('Error marking order as done:', error)
+    }
+  }
+  
+  const handleMarkAsReturn = async (orderId) => {
+    try {
+      await markOrderAsReturn(orderId)
+      fetchOrders()
+    } catch (error) {
+      toast.error('Error marking order as return:', error)
+      console.error('Error marking order as return:', error)
     }
   }
 
@@ -142,7 +164,9 @@ const Online = () => {
                   <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.size).join(', ') : 'N/A'}</td>
                   <td>{order.packagePrice || 'N/A'}</td>
                   <td>{order.createDate || 'N/A'}</td>
-                  <td>Done</td>
+                  <td>
+                    <Button color="primary" onClick={() => handleMarkAsReturn(order.id)}>Mark as Return</Button>
+                  </td>
                 </tr>
               )) : (
                 <tr>
@@ -153,7 +177,54 @@ const Online = () => {
           </Table>
         </CardBody>
       </Card>
-      <OrderModal isOpen={addModalOpen} toggle={toggleAddModal} addOrder={addOrder} />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <h3>Return Orders</h3> {/* Corrected to "Return Orders" */}
+          </CardTitle>
+        </CardHeader>
+        <CardBody>
+          <Table bordered>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+                <th>Article No</th>
+                <th>Color</th>
+                <th>Size</th>
+                <th>Price</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {returnOrders.length > 0 ? returnOrders.map((order, index) => (
+                <tr key={index}>
+                  <td>{order.id || 'N/A'}</td>
+                  <td>{order.customerName || 'N/A'}</td>
+                  <td>{order.address || 'N/A'}</td>
+                  <td>{order.contacts ? order.contacts.map(contact => contact.contact).join(', ') : 'N/A'}</td>
+                  <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.articleNo).join(', ') : 'N/A'}</td>
+                  <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.color).join(', ') : 'N/A'}</td>
+                  <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.size).join(', ') : 'N/A'}</td>
+                  <td>{order.packagePrice || 'N/A'}</td>
+                  <td>{order.createDate || 'N/A'}</td>
+                  <td>Return</td> {/* Marked as returned */}
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan="10" className="text-center">No return orders</td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </CardBody>
+      </Card>
+
+      <OrderModal isOpen={addModalOpen} toggle={toggleAddModal} onSave={addOrder} />
     </div>
   )
 }

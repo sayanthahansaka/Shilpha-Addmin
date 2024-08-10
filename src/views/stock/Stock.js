@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
 import { ShoppingCart } from 'react-feather'
-import AddStockModal from './StockModal' // Update the path accordingly
-import { getAllStock, getAllOnlineStock, getAllShopStock } from '../../servirces/stock/StockAPI' // Update the path accordingly
+import AddStockModal from './StockModal'
+import { getAllStock, getAllOnlineStock, getAllShopStock } from '../../servirces/stock/StockAPI'
 import UpdateModal from './UpdateModal'
+import AddStockModel from './AddStockModel'
 
 const Stock = () => {
   const [mainStock, setMainStock] = useState([])
@@ -12,9 +13,9 @@ const Stock = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [stockType, setStockType] = useState('')
   const [updateModalOpen, setUpdateModalOpen] = useState(false)
+  const [addStockModalOpen, setAddStockModalOpen] = useState(false)
   const [selectedStock, setSelectedStock] = useState(null)
   
-
   const fetchStock = async () => {
     try {
       const mainStockData = await getAllStock(0, 10, 'main')
@@ -34,6 +35,7 @@ const Stock = () => {
   }, [])
 
   const toggleUpdateModal = () => setUpdateModalOpen(!updateModalOpen)
+  const toggleAddStockModal = () => setAddStockModalOpen(!addStockModalOpen)
 
   const toggleModal = () => setModalOpen(!modalOpen)
 
@@ -44,19 +46,21 @@ const Stock = () => {
 
   return (
     <div className="stock-container">
-      {/* <AddStockModal isOpen={modalOpen} toggle={toggleModal} addStock={addStock} stockType={stockType} /> */}
       <AddStockModal isOpen={modalOpen} toggle={toggleModal} fetchStock={fetchStock} />
 
       <Card>
         <CardHeader>
           <CardTitle tag="h5">
             <ShoppingCart /> Main Stock
-           
           </CardTitle>
+          <Button color="primary" onClick={() => { setStockType('main'); toggleModal() }} style={{ float: 'right' }}>
+            Transfer stock
+          </Button>
+
+          <Button color="success" onClick={() => toggleAddStockModal()} style={{ float: 'right' }}>
+            Add stock
+          </Button>
         </CardHeader>
-        <Button color="primary" onClick={() => { setStockType('main'); toggleModal() }} style={{ float: 'right' }}>
-              Add Stock
-            </Button>
         <CardBody>
           <Table bordered>
             <thead>
@@ -84,15 +88,15 @@ const Stock = () => {
                   <td>
                     <Button
                       onClick={() => openUpdateModalWithStock(item)}
-                     color="success"
+                      color="success"
                     >
                       Update Stock
                     </Button>
-                    </td>
+                  </td>
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan="7" className="text-center">No Main Stock Available</td>
+                  <td colSpan="8" className="text-center">No Main Stock Available</td>
                 </tr>
               )}
             </tbody>
@@ -104,9 +108,6 @@ const Stock = () => {
         <CardHeader>
           <CardTitle tag="h5">
             <ShoppingCart /> Online Order Stock
-            {/* <Button color="primary" onClick={() => { setStockType('online'); toggleModal() }} style={{ float: 'right' }}>
-              Add Stock
-            </Button> */}
           </CardTitle>
         </CardHeader>
         <CardBody>
@@ -147,9 +148,6 @@ const Stock = () => {
         <CardHeader>
           <CardTitle tag="h5">
             <ShoppingCart /> Shop Stock
-            {/* <Button color="primary" onClick={() => { setStockType('shop'); toggleModal() }} style={{ float: 'right' }}>
-              Add Stock
-            </Button> */}
           </CardTitle>
         </CardHeader>
         <CardBody>
@@ -185,7 +183,18 @@ const Stock = () => {
           </Table>
         </CardBody>
       </Card>
-      <UpdateModal isOpen={updateModalOpen} toggle={toggleUpdateModal} material={selectedStock} fetchStock={fetchStock} />
+
+      <UpdateModal 
+        isOpen={updateModalOpen} 
+        toggle={toggleUpdateModal} 
+        stock={selectedStock} 
+        fetchStocks={fetchStock} 
+      />
+       <AddStockModel 
+        isOpen={addStockModalOpen} 
+        toggle={toggleAddStockModal} 
+        fetchStocks={fetchStock} 
+      />
     </div>
   )
 }

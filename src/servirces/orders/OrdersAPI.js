@@ -1,5 +1,5 @@
 import apiService from '../apiService' 
-import { toast } from 'react-toastify'
+
 
 export async function getAllShopOrders(pageNo = 0, pageCount = 10, place = 'shop', isDone = false) {
   let allData = []
@@ -94,7 +94,7 @@ export async function createShopOrder(orderData) {
   }
 }
 
-export async function getAllOnlineOrders(pageNo = 0, pageCount = 10, place = 'return', isDone = true) {
+export async function getAllOnlineOrders(pageNo = 0, pageCount = 10, place = 'online', isDone = false) {
   let allData = []
   let page = pageNo
   const pageSize = pageCount
@@ -103,7 +103,7 @@ export async function getAllOnlineOrders(pageNo = 0, pageCount = 10, place = 're
   while (moreData) {
     const apiObject = {
       method: 'GET',
-      authentication: true, // Ensures Bearer token is included
+      authentication: true, // Assuming this adds the Bearer token
       endpoint: `orders/${page}/${pageSize}?place=${place}&isDone=${isDone}`,
       body: null
     }
@@ -129,7 +129,6 @@ export async function getAllOnlineOrders(pageNo = 0, pageCount = 10, place = 're
   console.log('All data:', allData)
   return allData
 }
-
 
 export async function getAllDoneOnlineOrders(pageNo = 0, pageCount = 10, place = 'online', isDone = true) {
   let allData = []
@@ -205,11 +204,68 @@ export async function markOrderAsDone(orderId, place) {
   try {
     const response = await apiService.callApi(apiObject)
     console.log('Order marked as done successfully:', response)
-    toast.success(response.result)
     return response
   } catch (error) {
     console.error('Error marking order as done:', error)
-    toast.error('response.result')
+    throw error
+  }
+}
+
+export async function getAllReturnOnlineOrders(pageNo = 0, pageCount = 10, place = 'return', isDone = true) {
+  let allData = []
+  let page = pageNo
+  const pageSize = pageCount
+  let moreData = true
+
+  while (moreData) {
+    const apiObject = {
+      method: 'GET',
+      authentication: true, // Assuming this adds the Bearer token
+      endpoint: `orders/${page}/${pageSize}?place=${place}&isDone=${isDone}`,
+      body: null
+    }
+
+    try {
+      const response = await apiService.callApi(apiObject)
+      console.log(`Full response for page ${page}:`, response)
+
+      const orders = response.data // Adjust if the response format is different
+
+      if (orders && Array.isArray(orders) && orders.length > 0) {
+        allData = allData.concat(orders)
+        page += 1
+      } else {
+        moreData = false
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error)
+      moreData = false
+    }
+  }
+
+  console.log('All data:', allData)
+  return allData
+}
+
+
+export async function markOrderAsReturn(orderId) {
+  const apiObject = {
+    method: 'PUT',
+    authentication: true,
+    endpoint: `orders/return?orderId=${orderId}`,
+    headers: {
+      'Content-Type': 'application/json'
+   
+    },
+    body: null  
+  }
+
+  try {
+    const response = await apiService.callApi(apiObject)
+    console.log('Order marked as Return successfully:', response)
+    return response
+  } catch (error) {
+    console.error('Error marking order as Return:', error)
     throw error
   }
 }

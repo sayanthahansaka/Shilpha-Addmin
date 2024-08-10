@@ -102,7 +102,6 @@ export async function AddMaterial(materialName, qty, color) {
 }
 
 export async function updateMaterial(id, materialName, qty) {
-  // Create the data object
   const data = {
     id,
     materialName,
@@ -112,11 +111,11 @@ export async function updateMaterial(id, materialName, qty) {
   const apiObject = {
     method: 'PUT',
     authentication: true,
-    endpoint: `materials`, // Ensure the endpoint includes the material ID if necessary
+    endpoint: `materials`, 
     headers: {
-      'Content-Type': 'application/json' // Set Content-Type to application/json
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data) // Convert the data object to a JSON string
+    body: JSON.stringify(data)
   }
 
   try {
