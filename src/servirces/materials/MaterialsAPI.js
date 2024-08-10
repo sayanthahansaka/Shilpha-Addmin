@@ -128,32 +128,26 @@ export async function updateMaterial(id, materialName, qty) {
     throw error
   }
 }
-
-export const getMaterialHistory = async (materialId) => {
-  console.log(materialId)
+export const getMaterialHistory = async (materialId, start, end) => {
   let allHistory = []
   let page = 0
   const pageSize = 10
   let moreData = true
-  const id = materialId
-  const start = "2024-07-01"
-  const end = "2024-09-01"
 
   const materialDataHistory = {
-    id,
+    id: materialId,
     start,
     end
   }
-  console.log(JSON.stringify(materialDataHistory))
 
   while (moreData) {
     const apiObject = {
-      method: 'GET', // Change to POST
+      method: 'POST', // Change to POST
       authentication: true,
       endpoint: `materials/history/${page}/${pageSize}`,
       headers: {
         'Content-Type': 'application/json'
-        // 'Authorization': `Bearer <token>` // Add your token here
+        // 'Authorization': `Bearer <token>` // Include your token here
       },
       body: JSON.stringify(materialDataHistory) // Include body in the request
     }
@@ -162,7 +156,7 @@ export const getMaterialHistory = async (materialId) => {
       const response = await apiService.callApi(apiObject)
       console.log(`Full response for page ${page}:`, response)
 
-      const history = response.data?.data // Use optional chaining to handle cases where response.data might be null
+      const history = response.data // Use optional chaining to handle cases where response.data might be null
 
       if (history && Array.isArray(history) && history.length > 0) {
         allHistory = allHistory.concat(history)

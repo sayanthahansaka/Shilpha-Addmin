@@ -94,7 +94,7 @@ export async function createShopOrder(orderData) {
   }
 }
 
-export async function getAllOnlineOrders(pageNo = 0, pageCount = 10, place = 'online', isDone = false) {
+export async function getAllOnlineOrders(pageNo = 0, pageCount = 10, place = 'return', isDone = true) {
   let allData = []
   let page = pageNo
   const pageSize = pageCount
@@ -103,7 +103,7 @@ export async function getAllOnlineOrders(pageNo = 0, pageCount = 10, place = 'on
   while (moreData) {
     const apiObject = {
       method: 'GET',
-      authentication: true, // Assuming this adds the Bearer token
+      authentication: true, // Ensures Bearer token is included
       endpoint: `orders/${page}/${pageSize}?place=${place}&isDone=${isDone}`,
       body: null
     }
@@ -129,6 +129,7 @@ export async function getAllOnlineOrders(pageNo = 0, pageCount = 10, place = 'on
   console.log('All data:', allData)
   return allData
 }
+
 
 export async function getAllDoneOnlineOrders(pageNo = 0, pageCount = 10, place = 'online', isDone = true) {
   let allData = []

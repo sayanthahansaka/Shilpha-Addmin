@@ -115,7 +115,7 @@ export async function getAllStock() {
     const apiObject = {
       method: 'POST',
       authentication: true,
-      endpoint: `stock/`,
+      endpoint: `stock/transfer`,
       body: JSON.stringify({ id, qty, toStock }) // Convert body to JSON string
     }
   

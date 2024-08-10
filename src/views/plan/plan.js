@@ -62,11 +62,10 @@ const Plan = () => {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Quantity</th>
+               
                 <th>Employee Name</th>
                 <th>Start Date</th>
-                <th>Article No</th>
-                <th>Color</th>
+              
                 <th>Material Details</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -76,11 +75,10 @@ const Plan = () => {
               {processingPlans.length > 0 ? processingPlans.map((plan, index) => (
                 <tr key={index}>
                   <td>{plan.id || 'N/A'}</td>
-                  <td>{plan.outputQty || 'N/A'}</td>
+                 
                   <td>{plan.employeeName || 'N/A'}</td>
                   <td>{plan.createDate || 'N/A'}</td>
-                  <td>{plan.articleNo || 'N/A'}</td>
-                  <td>{plan.color || 'N/A'}</td>
+                 
                   <td>
                     <ul>
                       {plan.planMaterialsStocks?.map((material, idx) => (
@@ -116,11 +114,10 @@ const Plan = () => {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Quantity</th>
+              
                 <th>Employee Name</th>
                 <th>Start Date</th>
-                <th>Article No</th>
-                <th>Color</th>
+                
                 <th>Material Details</th>
                 <th>Status</th>
               </tr>
@@ -129,11 +126,10 @@ const Plan = () => {
               {donePlans.length > 0 ? donePlans.map((plan, index) => (
                 <tr key={index}>
                   <td>{plan.id || 'N/A'}</td>
-                  <td>{plan.outputQty || 'N/A'}</td>
+                 
                   <td>{plan.employeeName || 'N/A'}</td>
                   <td>{plan.createDate || 'N/A'}</td>
-                  <td>{plan.articleNo || 'N/A'}</td>
-                  <td>{plan.color || 'N/A'}</td>
+                  
                   <td>
                     <ul>
                       {plan.planMaterialsStocks?.map((material, idx) => (

@@ -3,6 +3,7 @@ import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap
 import { ShoppingCart } from 'react-feather'
 import AddStockModal from './StockModal' // Update the path accordingly
 import { getAllStock, getAllOnlineStock, getAllShopStock } from '../../servirces/stock/StockAPI' // Update the path accordingly
+import UpdateModal from './UpdateModal'
 
 const Stock = () => {
   const [mainStock, setMainStock] = useState([])
@@ -10,6 +11,9 @@ const Stock = () => {
   const [shopStock, setShopStock] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
   const [stockType, setStockType] = useState('')
+  const [updateModalOpen, setUpdateModalOpen] = useState(false)
+  const [selectedStock, setSelectedStock] = useState(null)
+  
 
   const fetchStock = async () => {
     try {
@@ -29,7 +33,14 @@ const Stock = () => {
     fetchStock()
   }, [])
 
+  const toggleUpdateModal = () => setUpdateModalOpen(!updateModalOpen)
+
   const toggleModal = () => setModalOpen(!modalOpen)
+
+  const openUpdateModalWithStock = (stock) => {
+    setSelectedStock(stock)
+    toggleUpdateModal()
+  }
 
   return (
     <div className="stock-container">
@@ -57,6 +68,7 @@ const Stock = () => {
                 <th>Quantity</th>
                 <th>Stock Place</th>
                 <th>Create Date</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -69,6 +81,14 @@ const Stock = () => {
                   <td>{item.qty}</td>
                   <td>{item.stockPlace}</td>
                   <td>{new Date(item.createDate).toLocaleDateString()}</td>
+                  <td>
+                    <Button
+                      onClick={() => openUpdateModalWithStock(item)}
+                     color="success"
+                    >
+                      Update Stock
+                    </Button>
+                    </td>
                 </tr>
               )) : (
                 <tr>
@@ -165,6 +185,7 @@ const Stock = () => {
           </Table>
         </CardBody>
       </Card>
+      <UpdateModal isOpen={updateModalOpen} toggle={toggleUpdateModal} material={selectedStock} fetchStock={fetchStock} />
     </div>
   )
 }
