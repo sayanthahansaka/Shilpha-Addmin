@@ -36,6 +36,7 @@ const Login = () => {
         Cookies.set("ACCESS_TOKEN", res.token)
         Cookies.set("REFRESH_TOKEN", res.refreshToken || '')
         localStorage.setItem("userData", JSON.stringify(res))
+        localStorage.setItem("userRole", JSON.stringify(res.userResponse.userRole))
         history.push('/home')
       } else {
         toast.error("Login failed. Please check your credentials and try again.")

@@ -1,5 +1,5 @@
 import apiService from '../apiService' 
-
+import { toast } from 'react-toastify'
 
 export async function getAllShopOrders(pageNo = 0, pageCount = 10, place = 'shop', isDone = false) {
   let allData = []
@@ -63,12 +63,14 @@ export async function getAllDoneShopOrders(pageNo = 0, pageCount = 10, place = '
         moreData = false
       }
     } catch (error) {
+      toast.error("Not Avillebale Stock")
       console.error('Error fetching orders:', error)
       moreData = false
     }
   }
 
   console.log('All data:', allData)
+  toast.success("Order Done")
   return allData
 }
 
@@ -157,12 +159,13 @@ export async function getAllDoneOnlineOrders(pageNo = 0, pageCount = 10, place =
         moreData = false
       }
     } catch (error) {
-      console.error('Error fetching orders:', error)
+    
       moreData = false
     }
   }
 
   console.log('All data:', allData)
+  
   return allData
 }
 
@@ -204,11 +207,24 @@ export async function markOrderAsDone(orderId, place) {
   try {
     const response = await apiService.callApi(apiObject)
     console.log('Order marked as done successfully:', response)
+    toast.success("Order Done")
     return response
   } catch (error) {
     console.error('Error marking order as done:', error)
+    toast.error("Not Avillebale Stock")
     throw error
   }
+}
+
+export const searchReturnOrders = async (searchQuery) => {
+  const params = {
+    place: 'return',
+    isDone: true,
+    text: searchQuery // Add search text to params
+  }
+  
+  const response = await apiService.callApi('/orders/search', 'POST', params)
+  return response.data
 }
 
 export async function getAllReturnOnlineOrders(pageNo = 0, pageCount = 10, place = 'return', isDone = true) {

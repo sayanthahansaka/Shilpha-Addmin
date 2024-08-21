@@ -1,11 +1,29 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button, Pagination, PaginationItem, PaginationLink } from 'reactstrap'
 import { getAllProcessingPlans, getAllDonePlans, submitPlanAsDone } from '../../servirces/plan/PlanAPI'
 import { toast } from 'react-toastify'
 
 const Plan = () => {
   const [processingPlans, setProcessingPlans] = useState([])
   const [donePlans, setDonePlans] = useState([])
+
+  // Pagination states for each table
+  const [processingPage, setProcessingPage] = useState(1)
+  const [donePage, setDonePage] = useState(1)
+  const [itemsPerPage] = useState(10)
+
+  // Calculate current items for each plan
+  const indexOfLastProcessingPlan = processingPage * itemsPerPage
+  const indexOfFirstProcessingPlan = indexOfLastProcessingPlan - itemsPerPage
+  const currentProcessingPlans = processingPlans.slice(indexOfFirstProcessingPlan, indexOfLastProcessingPlan)
+
+  const indexOfLastDonePlan = donePage * itemsPerPage
+  const indexOfFirstDonePlan = indexOfLastDonePlan - itemsPerPage
+  const currentDonePlans = donePlans.slice(indexOfFirstDonePlan, indexOfLastDonePlan)
+
+  // Handle page changes for each plan
+  const paginateProcessingPlans = (pageNumber) => setProcessingPage(pageNumber)
+  const paginateDonePlans = (pageNumber) => setDonePage(pageNumber)
 
   const fetchPlans = async () => {
     try {
@@ -14,9 +32,6 @@ const Plan = () => {
         getAllProcessingPlans(),
         getAllDonePlans()
       ])
-
-      console.log("Fetched processing plan data:", processingData)
-      console.log("Fetched done plan data:", doneData)
 
       if (Array.isArray(processingData)) {
         setProcessingPlans(processingData)
@@ -50,7 +65,7 @@ const Plan = () => {
   }
 
   return (
-    <div className="stock-container">
+    <div className="plan-container">
       <Card>
         <CardHeader>
           <CardTitle>
@@ -62,23 +77,19 @@ const Plan = () => {
             <thead>
               <tr>
                 <th>ID</th>
-               
                 <th>Employee Name</th>
                 <th>Start Date</th>
-              
                 <th>Material Details</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {processingPlans.length > 0 ? processingPlans.map((plan, index) => (
+              {currentProcessingPlans.length > 0 ? currentProcessingPlans.map((plan, index) => (
                 <tr key={index}>
                   <td>{plan.id || 'N/A'}</td>
-                 
                   <td>{plan.employeeName || 'N/A'}</td>
                   <td>{plan.createDate || 'N/A'}</td>
-                 
                   <td>
                     <ul>
                       {plan.planMaterialsStocks?.map((material, idx) => (
@@ -95,11 +106,20 @@ const Plan = () => {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan="9" className="text-center">No processing plans</td>
+                  <td colSpan="6" className="text-center">No processing plans</td>
                 </tr>
               )}
             </tbody>
           </Table>
+          <Pagination>
+            {[...Array(Math.ceil(processingPlans.length / itemsPerPage)).keys()].map(number => (
+              <PaginationItem key={number + 1} active={number + 1 === processingPage}>
+                <PaginationLink onClick={() => paginateProcessingPlans(number + 1)}>
+                  {number + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+          </Pagination>
         </CardBody>
       </Card>
 
@@ -114,22 +134,18 @@ const Plan = () => {
             <thead>
               <tr>
                 <th>ID</th>
-              
                 <th>Employee Name</th>
                 <th>Start Date</th>
-                
                 <th>Material Details</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {donePlans.length > 0 ? donePlans.map((plan, index) => (
+              {currentDonePlans.length > 0 ? currentDonePlans.map((plan, index) => (
                 <tr key={index}>
                   <td>{plan.id || 'N/A'}</td>
-                 
                   <td>{plan.employeeName || 'N/A'}</td>
                   <td>{plan.createDate || 'N/A'}</td>
-                  
                   <td>
                     <ul>
                       {plan.planMaterialsStocks?.map((material, idx) => (
@@ -143,11 +159,20 @@ const Plan = () => {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan="8" className="text-center">No done plans</td>
+                  <td colSpan="5" className="text-center">No done plans</td>
                 </tr>
               )}
             </tbody>
           </Table>
+          <Pagination>
+            {[...Array(Math.ceil(donePlans.length / itemsPerPage)).keys()].map(number => (
+              <PaginationItem key={number + 1} active={number + 1 === donePage}>
+                <PaginationLink onClick={() => paginateDonePlans(number + 1)}>
+                  {number + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+          </Pagination>
         </CardBody>
       </Card>
     </div>

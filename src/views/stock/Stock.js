@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button, Pagination, PaginationItem, PaginationLink } from 'reactstrap'
 import { ShoppingCart } from 'react-feather'
 import AddStockModal from './StockModal'
 import { getAllStock, getAllOnlineStock, getAllShopStock } from '../../servirces/stock/StockAPI'
@@ -10,12 +10,38 @@ const Stock = () => {
   const [mainStock, setMainStock] = useState([])
   const [onlineOrderStock, setOnlineOrderStock] = useState([])
   const [shopStock, setShopStock] = useState([])
+
   const [modalOpen, setModalOpen] = useState(false)
   const [stockType, setStockType] = useState('')
   const [updateModalOpen, setUpdateModalOpen] = useState(false)
   const [addStockModalOpen, setAddStockModalOpen] = useState(false)
   const [selectedStock, setSelectedStock] = useState(null)
-  
+  const userRole = localStorage.getItem('userRole')
+
+  // Pagination states for each table
+  const [mainStockPage, setMainStockPage] = useState(1)
+  const [onlineStockPage, setOnlineStockPage] = useState(1)
+  const [shopStockPage, setShopStockPage] = useState(1)
+  const [itemsPerPage] = useState(10) // Set the number of items per page for all tables
+
+  // Calculate current items for each stock
+  const indexOfLastMainStock = mainStockPage * itemsPerPage
+  const indexOfFirstMainStock = indexOfLastMainStock - itemsPerPage
+  const currentMainStock = mainStock.slice(indexOfFirstMainStock, indexOfLastMainStock)
+
+  const indexOfLastOnlineStock = onlineStockPage * itemsPerPage
+  const indexOfFirstOnlineStock = indexOfLastOnlineStock - itemsPerPage
+  const currentOnlineStock = onlineOrderStock.slice(indexOfFirstOnlineStock, indexOfLastOnlineStock)
+
+  const indexOfLastShopStock = shopStockPage * itemsPerPage
+  const indexOfFirstShopStock = indexOfLastShopStock - itemsPerPage
+  const currentShopStock = shopStock.slice(indexOfFirstShopStock, indexOfLastShopStock)
+
+  // Handle page changes for each stock
+  const paginateMainStock = (pageNumber) => setMainStockPage(pageNumber)
+  const paginateOnlineStock = (pageNumber) => setOnlineStockPage(pageNumber)
+  const paginateShopStock = (pageNumber) => setShopStockPage(pageNumber)
+
   const fetchStock = async () => {
     try {
       const mainStockData = await getAllStock(0, 10, 'main')
@@ -36,7 +62,6 @@ const Stock = () => {
 
   const toggleUpdateModal = () => setUpdateModalOpen(!updateModalOpen)
   const toggleAddStockModal = () => setAddStockModalOpen(!addStockModalOpen)
-
   const toggleModal = () => setModalOpen(!modalOpen)
 
   const openUpdateModalWithStock = (stock) => {
@@ -48,6 +73,7 @@ const Stock = () => {
     <div className="stock-container">
       <AddStockModal isOpen={modalOpen} toggle={toggleModal} fetchStock={fetchStock} />
 
+      {/* Main Stock Table */}
       <Card>
         <CardHeader>
           <CardTitle tag="h5">
@@ -57,9 +83,12 @@ const Stock = () => {
             Transfer stock
           </Button>
 
-          <Button color="success" onClick={() => toggleAddStockModal()} style={{ float: 'right' }}>
-            Add stock
-          </Button>
+         {/* Conditionally render the "Add stock" button */}
+         {userRole === '"ROLE_SUPER_ADMIN"' && (
+            <Button color="success" onClick={toggleAddStockModal} style={{ float: 'right' }}>
+              Add stock
+            </Button>
+          )}
         </CardHeader>
         <CardBody>
           <Table bordered>
@@ -76,7 +105,7 @@ const Stock = () => {
               </tr>
             </thead>
             <tbody>
-              {mainStock.length > 0 ? mainStock.map((item) => (
+            {currentMainStock.length > 0 ? currentMainStock.map((item) => (
                 <tr key={item.id}>
                   <td>{item.id}</td>
                   <td>{item.articleNo}</td>
@@ -101,9 +130,19 @@ const Stock = () => {
               )}
             </tbody>
           </Table>
+          <Pagination>
+            {[...Array(Math.ceil(mainStock.length / itemsPerPage)).keys()].map(number => (
+              <PaginationItem key={number + 1} active={number + 1 === mainStockPage}>
+                <PaginationLink onClick={() => paginateMainStock(number + 1)}>
+                  {number + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+          </Pagination>
         </CardBody>
       </Card>
 
+      {/* Online Order Stock Table */}
       <Card>
         <CardHeader>
           <CardTitle tag="h5">
@@ -124,7 +163,7 @@ const Stock = () => {
               </tr>
             </thead>
             <tbody>
-              {onlineOrderStock.length > 0 ? onlineOrderStock.map((item) => (
+            {currentOnlineStock.length > 0 ? currentOnlineStock.map((item) => (
                 <tr key={item.id}>
                   <td>{item.id}</td>
                   <td>{item.articleNo}</td>
@@ -141,9 +180,19 @@ const Stock = () => {
               )}
             </tbody>
           </Table>
+          <Pagination>
+            {[...Array(Math.ceil(onlineOrderStock.length / itemsPerPage)).keys()].map(number => (
+              <PaginationItem key={number + 1} active={number + 1 === onlineStockPage}>
+                <PaginationLink onClick={() => paginateOnlineStock(number + 1)}>
+                  {number + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+          </Pagination>
         </CardBody>
       </Card>
 
+      {/* Shop Stock Table */}
       <Card>
         <CardHeader>
           <CardTitle tag="h5">
@@ -164,7 +213,7 @@ const Stock = () => {
               </tr>
             </thead>
             <tbody>
-              {shopStock.length > 0 ? shopStock.map((item) => (
+              {currentShopStock.length > 0 ? currentShopStock.map((item) => (
                 <tr key={item.id}>
                   <td>{item.id}</td>
                   <td>{item.articleNo}</td>
@@ -181,19 +230,29 @@ const Stock = () => {
               )}
             </tbody>
           </Table>
+          <Pagination>
+            {[...Array(Math.ceil(shopStock.length / itemsPerPage)).keys()].map(number => (
+              <PaginationItem key={number + 1} active={number + 1 === shopStockPage}>
+                <PaginationLink onClick={() => paginateShopStock(number + 1)}>
+                  {number + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+          </Pagination>
         </CardBody>
       </Card>
 
-      <UpdateModal 
-        isOpen={updateModalOpen} 
-        toggle={toggleUpdateModal} 
-        stock={selectedStock} 
-        fetchStocks={fetchStock} 
+      {/* Modals for adding and updating stock */}
+      <UpdateModal
+        isOpen={updateModalOpen}
+        toggle={toggleUpdateModal}
+        fetchStock={fetchStock}
+        selectedStock={selectedStock}
       />
-       <AddStockModel 
-        isOpen={addStockModalOpen} 
-        toggle={toggleAddStockModal} 
-        fetchStocks={fetchStock} 
+      <AddStockModel
+        isOpen={addStockModalOpen}
+        toggle={toggleAddStockModal}
+        fetchStock={fetchStock}
       />
     </div>
   )

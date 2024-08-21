@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button, Pagination, PaginationItem, PaginationLink } from 'reactstrap'
+
 import { Archive } from 'react-feather'
 import PlanModel from './planModel'
 import AddMaterialsModel from './AddMaterialsModel'
@@ -14,6 +15,17 @@ const Materials = () => {
   const [updateModalOpen, setUpdateModalOpen] = useState(false)
   const [historyModelOpen, sethistoryModelOpen] = useState(false)
   const [selectedMaterial, setSelectedMaterial] = useState(null)
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(10) // You can adjust this as needed
+
+  // Calculate the current items
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = stock.slice(indexOfFirstItem, indexOfLastItem)
+
+  // Handle page change
+  const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
   const fetchMaterials = async () => {
     const materials = await getAllmaterials()
@@ -57,17 +69,19 @@ const Materials = () => {
                 <th>Material Name</th>
                 <th>Quantity</th>
                 <th>Color</th>
+                <th>Size</th>
                 <th>Create Date</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {stock.map((item, index) => (
+            {currentItems.map((item, index) => (
                 <tr key={index}>
                   <td>{item.id}</td>
                   <td>{item.materialName}</td>
                   <td>{item.qty}</td>
                   <td>{item.color}</td>
+                  <td></td>
                   <td>{item.createDate}</td>
                   <td>
                     <Button
@@ -90,6 +104,15 @@ const Materials = () => {
               ))}
             </tbody>
           </Table>
+          <Pagination>
+        {[...Array(Math.ceil(stock.length / itemsPerPage)).keys()].map(number => (
+          <PaginationItem key={number + 1} active={number + 1 === currentPage}>
+            <PaginationLink onClick={() => paginate(number + 1)}>
+              {number + 1}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+      </Pagination>
         </CardBody>
       </Card>
       

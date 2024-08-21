@@ -1,6 +1,11 @@
 import { Mail, Home, Box, BarChart2, ShoppingCart, ShoppingBag, Archive, Airplay } from 'react-feather'
 
-export default [
+// Get the user role from localStorage
+const userRole = localStorage.getItem('userRole')
+console.log(userRole)
+
+// Define the menu items
+const menuItems = [
   {
     id: 'home',
     title: 'Home',
@@ -44,3 +49,14 @@ export default [
     navLink: '/revenue'
   }
 ]
+
+
+const filteredMenuItems = menuItems.filter(item => {
+  if (item.id === 'revenue' && userRole !== '"ROLE_SUPER_ADMIN"') {
+    return false
+  }
+  return true
+})
+
+
+export default filteredMenuItems

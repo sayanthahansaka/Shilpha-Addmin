@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table, Button } from 'reactstrap'
-import { getAllOnlineOrders, getAllDoneOnlineOrders, markOrderAsDone, markOrderAsReturn, getAllReturnOnlineOrders } from '../../servirces/orders/OrdersAPI'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button, FormGroup, Input } from 'reactstrap'
+import { getAllOnlineOrders, getAllDoneOnlineOrders, markOrderAsDone, markOrderAsReturn, getAllReturnOnlineOrders, searchReturnOrders } from '../../servirces/orders/OrdersAPI'
 import OrderModal from './OrderModal'
 import { toast } from 'react-toastify'
 
@@ -9,13 +9,14 @@ const Online = () => {
   const [doneOrders, setDoneOrders] = useState([])
   const [returnOrders, setReturnOrders] = useState([])
   const [addModalOpen, setAddModalOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
 
   const fetchOrders = async () => {
     try {
       const [processingData, doneData, returnData] = await Promise.all([
         getAllOnlineOrders(),
         getAllDoneOnlineOrders(),
-        getAllReturnOnlineOrders() // Added to fetch return orders
+        getAllReturnOnlineOrders()
       ])
 
       if (Array.isArray(processingData)) {
@@ -33,7 +34,7 @@ const Online = () => {
       }
 
       if (Array.isArray(returnData)) {
-        setReturnOrders(returnData) // Set return orders state
+        setReturnOrders(returnData)
       } else {
         toast.error("Unexpected return data format:", returnData)
         console.error("Unexpected return data format:", returnData)
@@ -75,6 +76,16 @@ const Online = () => {
     setProcessingOrders(prevOrders => [...prevOrders, newOrder])
   }
 
+  const handleSearch = async () => {
+    try {
+      const searchResults = await searchReturnOrders(searchQuery)
+      setReturnOrders(searchResults)
+    } catch (error) {
+      toast.error('Error searching return orders:', error)
+      console.error('Error searching return orders:', error)
+    }
+  }
+
   return (
     <div className="orders-container">
       <Card>
@@ -83,6 +94,15 @@ const Online = () => {
             <h3>Processing Orders</h3>
           </CardTitle>
         </CardHeader>
+        <FormGroup>
+          <Input 
+            type="text" 
+            placeholder="Search return orders" 
+            value={searchQuery} 
+            onChange={(e) => setSearchQuery(e.target.value)} 
+          />
+          {/* <Button color="primary" onClick={handleSearch}>Search</Button> */}
+        </FormGroup>
         <Button color="success" onClick={toggleAddModal} style={{ float: 'right' }}>
           Add New Order
         </Button>
@@ -181,7 +201,7 @@ const Online = () => {
       <Card>
         <CardHeader>
           <CardTitle>
-            <h3>Return Orders</h3> {/* Corrected to "Return Orders" */}
+            <h3>Return Orders</h3>
           </CardTitle>
         </CardHeader>
         <CardBody>
@@ -212,7 +232,7 @@ const Online = () => {
                   <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.size).join(', ') : 'N/A'}</td>
                   <td>{order.packagePrice || 'N/A'}</td>
                   <td>{order.createDate || 'N/A'}</td>
-                  <td>Return</td> {/* Marked as returned */}
+                  <td>{order.status || 'N/A'}</td>
                 </tr>
               )) : (
                 <tr>
