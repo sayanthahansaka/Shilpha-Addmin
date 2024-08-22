@@ -6,8 +6,9 @@ import { toast } from 'react-toastify'
 const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
   const [formData, setFormData] = useState({
     materialName: '',
-    qty: '',
-    color: ''
+    color: '',
+    size: '',
+    qty: ''
   })
 
   const handleChange = (e) => {
@@ -21,7 +22,7 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await AddMaterial(formData.materialName, formData.qty, formData.color)
+      await AddMaterial(formData.materialName, formData.qty, formData.color, formData.size)
       toast.success('Material added successfully!')
       fetchMaterials() // Refresh the table data
       toggle()
@@ -41,12 +42,16 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
             <Input type="text" name="materialName" id="materialName" value={formData.materialName} onChange={handleChange} required />
           </FormGroup>
           <FormGroup>
-            <Label for="qty">Quantity</Label>
-            <Input type="number" name="qty" id="qty" value={formData.qty} onChange={handleChange} required />
-          </FormGroup>
-          <FormGroup>
             <Label for="color">color</Label>
             <Input type="text" name="color" id="color" value={formData.color} onChange={handleChange} required />
+          </FormGroup>
+          <FormGroup>
+            <Label for="size">size</Label>
+            <Input type="text" name="size" id="size" value={formData.size} onChange={handleChange} required />
+          </FormGroup>
+          <FormGroup>
+            <Label for="qty">Quantity</Label>
+            <Input type="number" name="qty" id="qty" value={formData.qty} onChange={handleChange} required />
           </FormGroup>
         </ModalBody>
         <ModalFooter>

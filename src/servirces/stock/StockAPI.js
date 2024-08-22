@@ -17,7 +17,7 @@ export async function getAllStock() {
   
       try {
         const response = await apiService.callApi(apiObject)
-        console.log(`Full response for page ${page}:`, response)
+        // console.log(`Full response for page ${page}:`, response)
   
         const materials = response.data 
   
@@ -33,7 +33,7 @@ export async function getAllStock() {
       }
     }
   
-    console.log('All data:', allData)
+    // console.log('All data:', allData)
     return allData
   }
   
@@ -70,7 +70,7 @@ export async function getAllStock() {
       }
     }
   
-    console.log('All data:', allData)
+    // console.log('All data:', allData)
     return allData
   }
 
@@ -91,7 +91,7 @@ export async function getAllStock() {
   
       try {
         const response = await apiService.callApi(apiObject)
-        console.log(`Full response for page ${page}:`, response)
+        // console.log(`Full response for page ${page}:`, response)
   
         const materials = response.data 
   
@@ -107,7 +107,7 @@ export async function getAllStock() {
       }
     }
   
-    console.log('All data:', allData)
+    // console.log('All data:', allData)
     return allData
   }
 
@@ -124,7 +124,7 @@ export async function getAllStock() {
       if (response && response.status === 'SUCCESS') {
         return response // Assume response is { status: 'SUCCESS', ... }
       } else {
-        console.error('Unexpected response format:', response)
+        // console.error('Unexpected response format:', response)
         throw new Error('Unexpected response format')
       }
     } catch (error) {
@@ -133,6 +133,7 @@ export async function getAllStock() {
     }
   }
 export const updateStock = async (id, qty, color, stockPlace) => {
+  console.log("ID :", id)
   const data = {
     id, 
     qty, 
@@ -148,6 +149,7 @@ export const updateStock = async (id, qty, color, stockPlace) => {
     },
     body: JSON.stringify(data)
   }
+  // console.log(JSON.stringify(data))
 
   try {
     const response = await apiService.callApi(apiObject)
@@ -179,7 +181,7 @@ export async function addStock(articleNo, color, size, qty, stockPlace = 'main')
 
   try {
     const response = await apiService.callApi(apiObject)
-    console.log('Stock added successfully:', response)
+    // console.log('Stock added successfully:', response)
     return response
   } catch (error) {
     console.error('Error adding stock:', error)

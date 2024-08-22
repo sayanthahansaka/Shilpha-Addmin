@@ -81,7 +81,7 @@ const Materials = () => {
                   <td>{item.materialName}</td>
                   <td>{item.qty}</td>
                   <td>{item.color}</td>
-                  <td></td>
+                  <td>{item.size}</td>
                   <td>{item.createDate}</td>
                   <td>
                     <Button

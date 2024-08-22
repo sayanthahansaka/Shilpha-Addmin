@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardBody, CardHeader, CardTitle, Table, Button, FormGroup, Input } from 'reactstrap'
-import { getAllOnlineOrders, getAllDoneOnlineOrders, markOrderAsDone, markOrderAsReturn, getAllReturnOnlineOrders, searchReturnOrders } from '../../servirces/orders/OrdersAPI'
+import { getAllOnlineOrders, getAllDoneOnlineOrders, markOrderAsDone, markOrderAsReturn, getAllReturnOnlineOrders } from '../../servirces/orders/OrdersAPI'
+import {searchReturnOrders} from '../../servirces/orders/OrderSearchAPI'
 import OrderModal from './OrderModal'
 import { toast } from 'react-toastify'
 
@@ -78,13 +79,24 @@ const Online = () => {
 
   const handleSearch = async () => {
     try {
-      const searchResults = await searchReturnOrders(searchQuery)
-      setReturnOrders(searchResults)
+      const start = 0 
+      const limit = 10 
+      const place = '' 
+      const isDone = false 
+  
+      const searchResults = await searchReturnOrders(place, isDone, searchQuery, start, limit)
+      if (searchResults.success) {
+        setReturnOrders(searchResults.data)
+      } else {
+        toast.error(searchResults.result || 'Error searching return orders')
+        console.error('Error:', searchResults.result)
+      }
     } catch (error) {
       toast.error('Error searching return orders:', error)
       console.error('Error searching return orders:', error)
     }
   }
+  
 
   return (
     <div className="orders-container">
@@ -95,12 +107,12 @@ const Online = () => {
           </CardTitle>
         </CardHeader>
         <FormGroup>
-          <Input 
+          {/* <Input 
             type="text" 
             placeholder="Search return orders" 
             value={searchQuery} 
             onChange={(e) => setSearchQuery(e.target.value)} 
-          />
+          /> */}
           {/* <Button color="primary" onClick={handleSearch}>Search</Button> */}
         </FormGroup>
         <Button color="success" onClick={toggleAddModal} style={{ float: 'right' }}>
@@ -199,50 +211,64 @@ const Online = () => {
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>
-            <h3>Return Orders</h3>
-          </CardTitle>
-        </CardHeader>
-        <CardBody>
-          <Table bordered>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer Name</th>
-                <th>Address</th>
-                <th>Phone Number</th>
-                <th>Article No</th>
-                <th>Color</th>
-                <th>Size</th>
-                <th>Price</th>
-                <th>Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {returnOrders.length > 0 ? returnOrders.map((order, index) => (
-                <tr key={index}>
-                  <td>{order.id || 'N/A'}</td>
-                  <td>{order.customerName || 'N/A'}</td>
-                  <td>{order.address || 'N/A'}</td>
-                  <td>{order.contacts ? order.contacts.map(contact => contact.contact).join(', ') : 'N/A'}</td>
-                  <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.articleNo).join(', ') : 'N/A'}</td>
-                  <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.color).join(', ') : 'N/A'}</td>
-                  <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.size).join(', ') : 'N/A'}</td>
-                  <td>{order.packagePrice || 'N/A'}</td>
-                  <td>{order.createDate || 'N/A'}</td>
-                  <td>{order.status || 'N/A'}</td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan="10" className="text-center">No return orders</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-        </CardBody>
-      </Card>
+  <CardHeader>
+    <CardTitle>
+      <h3>Return Orders</h3>
+    </CardTitle>
+    <FormGroup className="d-flex">
+      <Input 
+        type="text" 
+        placeholder="Search return orders" 
+        value={searchQuery} 
+        onChange={(e) => setSearchQuery(e.target.value)} 
+      />
+      <Button color="primary" onClick={handleSearch} style={{ marginLeft: '10px' }}>
+        Search
+      </Button>
+    </FormGroup>
+  </CardHeader>
+  <CardBody>
+    <Table bordered>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer Name</th>
+          <th>Address</th>
+          <th>Phone Number</th>
+          <th>Article No</th>
+          <th>Color</th>
+          <th>Size</th>
+          <th>Price</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {returnOrders.length > 0 ? (
+          returnOrders.map((order, index) => (
+            <tr key={index}>
+              <td>{order.id || 'N/A'}</td>
+              <td>{order.customerName || 'N/A'}</td>
+              <td>{order.address || 'N/A'}</td>
+              <td>{order.contacts ? order.contacts.map(contact => contact.contact).join(', ') : 'N/A'}</td>
+              <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.articleNo).join(', ') : 'N/A'}</td>
+              <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.color).join(', ') : 'N/A'}</td>
+              <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.size).join(', ') : 'N/A'}</td>
+              <td>{order.packagePrice || 'N/A'}</td>
+              <td>{order.createDate || 'N/A'}</td>
+              <td>{order.status || 'N/A'}</td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="10" className="text-center">No return orders</td>
+          </tr>
+        )}
+      </tbody>
+    </Table>
+  </CardBody>
+</Card>
+
 
       <OrderModal isOpen={addModalOpen} toggle={toggleAddModal} onSave={addOrder} />
     </div>

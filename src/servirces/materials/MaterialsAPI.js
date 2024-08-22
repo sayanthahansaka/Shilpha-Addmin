@@ -74,21 +74,24 @@ export async function getAllmaterials() {
 //     }
 //   }
 
-export async function AddMaterial(materialName, qty, color) {
+
+export async function AddMaterial(materialName, qty, color, size) {
   const materialData = {
     materialName,
-    qty,
-    color
+    color,
+    size,
+    qty
   }
 
   const apiObject = {
     method: 'POST',
-    authentication: true, // Ensure this is handled by your ApiService
+    authentication: true, // This should trigger inclusion of the Bearer token in apiService
     endpoint: 'materials',
     headers: {
+      // 'Authorization': `Bearer ${token}`, // Include the authorization token
       'Content-Type': 'application/json' // Setting content type for JSON payload
     },
-    body: JSON.stringify(materialData) // Convert the object to a JSON string
+    body: JSON.stringify(materialData)
   }
 
   try {
@@ -100,6 +103,7 @@ export async function AddMaterial(materialName, qty, color) {
     throw error
   }
 }
+
 
 export async function updateMaterial(id, materialName, qty) {
   const data = {

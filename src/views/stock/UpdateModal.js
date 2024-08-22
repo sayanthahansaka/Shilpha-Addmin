@@ -4,14 +4,12 @@ import { updateStock } from '../../servirces/stock/StockAPI'
 import { toast } from 'react-toastify'
 
 const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
-  console.log("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm : ", stock)
   const [formData, setFormData] = useState({
     id: '',
     qty: '',
     color: '',
     stockPlace: 'main'
   })
- 
 
   useEffect(() => {
     if (stock) {
@@ -19,25 +17,29 @@ const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
         id: stock.id || '',
         qty: stock.qty || '',
         color: stock.color || '',
-        stockPlace: stock.stockPlace || 'main' // default to 'main'
+        stockPlace: stock.stockPlace || 'main'
       })
     }
   }, [stock])
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value
-    })
+    }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
+      // Make sure id is correctly passed
+      console.log('Submitting form with data:', formData)
       await updateStock(formData.id, formData.qty, formData.color, formData.stockPlace)
       toast.success('Stock updated successfully!')
-      fetchStocks()
+      if (typeof fetchStocks === 'function') {
+        fetchStocks()
+      }
       toggle()
     } catch (error) {
       console.error('Error updating stock:', error)
@@ -50,6 +52,18 @@ const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
       <ModalHeader toggle={toggle}>Update Stock</ModalHeader>
       <Form onSubmit={handleSubmit}>
         <ModalBody>
+          {/* Hidden input for id, useful for debugging but not displayed to the user */}
+          <FormGroup>
+            <Label for="id">ID</Label>
+            <Input
+              type="text"
+              name="id"
+              id="id"
+              value={formData.id}
+              onChange={handleChange}
+              // disabled  // Disable the input if id should not be changed by the user
+            />
+          </FormGroup>
           <FormGroup>
             <Label for="qty">Quantity</Label>
             <Input
