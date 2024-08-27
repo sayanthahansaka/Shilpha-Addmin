@@ -36,14 +36,14 @@ const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
       // Make sure id is correctly passed
       console.log('Submitting form with data:', formData)
       await updateStock(formData.id, formData.qty, formData.color, formData.stockPlace)
-      toast.success('Stock updated successfully!')
+      // toast.success('Stock updated successfully!')
       if (typeof fetchStocks === 'function') {
         fetchStocks()
       }
       toggle()
     } catch (error) {
       console.error('Error updating stock:', error)
-      toast.error('Failed to update stock.')
+      // toast.error('Failed to update stock.')
     }
   }
 

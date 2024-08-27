@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardBody, CardHeader, CardTitle, Table, Button, Pagination, PaginationItem, PaginationLink } from 'reactstrap'
 import { getAllProcessingPlans, getAllDonePlans, submitPlanAsDone } from '../../servirces/plan/PlanAPI'
+import UpdatePlanModel from './UpdatePlanModel'
 import { toast } from 'react-toastify'
 
 const Plan = () => {
@@ -11,6 +12,10 @@ const Plan = () => {
   const [processingPage, setProcessingPage] = useState(1)
   const [donePage, setDonePage] = useState(1)
   const [itemsPerPage] = useState(10)
+
+  // State for controlling the UpdatePlanModel modal
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState(null)
 
   // Calculate current items for each plan
   const indexOfLastProcessingPlan = processingPage * itemsPerPage
@@ -56,12 +61,17 @@ const Plan = () => {
   const markAsDone = async (planId) => {
     try {
       await submitPlanAsDone(planId)
-      toast.success('Plan marked as done!')
+      // toast.success('Plan marked as done!')
       fetchPlans()  // Refresh the plans data after marking as done
     } catch (error) {
-      toast.error('Error marking plan as done. Please try again.')
+      // toast.error('Error marking plan as done. Please try again.')
       console.error('Error marking plan as done:', error)
     }
+  }
+
+  const toggleUpdateModal = (plan, material) => {
+    setSelectedPlan(plan, material)
+    setIsUpdateModalOpen(!isUpdateModalOpen)
   }
 
   return (
@@ -80,6 +90,7 @@ const Plan = () => {
                 <th>Employee Name</th>
                 <th>Start Date</th>
                 <th>Material Details</th>
+                <th>Article No</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -99,9 +110,15 @@ const Plan = () => {
                       ))}
                     </ul>
                   </td>
+                  <td>{plan.planingStocks?.map((planStocks, no) => (
+                    <li key={no}>
+                      {planStocks.stockItem?.articleNo}
+                    </li>
+                  ))}</td>
                   <td>{plan.process || 'N/A'}</td>
                   <td>
                     <Button color="primary" onClick={() => markAsDone(plan.id)}>Mark as Done</Button>
+                    <Button color="success" onClick={() => toggleUpdateModal(plan)}>Update plan</Button>
                   </td>
                 </tr>
               )) : (
@@ -137,6 +154,7 @@ const Plan = () => {
                 <th>Employee Name</th>
                 <th>Start Date</th>
                 <th>Material Details</th>
+                <th>Article No</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -155,6 +173,11 @@ const Plan = () => {
                       ))}
                     </ul>
                   </td>
+                  <td>{plan.planingStocks?.map((planStocks, no) => (
+                    <li key={no}>
+                      {planStocks.stockItem?.articleNo}
+                    </li>
+                  ))}</td>
                   <td>{plan.process || 'N/A'}</td>
                 </tr>
               )) : (
@@ -175,6 +198,15 @@ const Plan = () => {
           </Pagination>
         </CardBody>
       </Card>
+
+      {/* Update Plan Modal */}
+      {selectedPlan && (
+        <UpdatePlanModel
+          isOpen={isUpdateModalOpen}
+          toggle={() => setIsUpdateModalOpen(!isUpdateModalOpen)}
+          plan={selectedPlan}  // Pass the selected plan to the modal
+        />
+      )}
     </div>
   )
 }

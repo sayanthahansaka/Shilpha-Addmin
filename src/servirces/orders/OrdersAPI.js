@@ -10,16 +10,16 @@ export async function getAllShopOrders(pageNo = 0, pageCount = 10, place = 'shop
   while (moreData) {
     const apiObject = {
       method: 'GET',
-      authentication: true, // Assuming this adds the Bearer token
+      authentication: true,
       endpoint: `orders/${page}/${pageSize}?place=${place}&isDone=${isDone}`,
       body: null
     }
 
     try {
       const response = await apiService.callApi(apiObject)
-      console.log(`Full response for page ${page}:`, response)
+      // console.log(`Full response for page ${page}:`, response)
 
-      const orders = response.data // Adjust if the response format is different
+      const orders = response.data
 
       if (orders && Array.isArray(orders) && orders.length > 0) {
         allData = allData.concat(orders)
@@ -45,16 +45,16 @@ export async function getAllDoneShopOrders(pageNo = 0, pageCount = 10, place = '
   while (moreData) {
     const apiObject = {
       method: 'GET',
-      authentication: true, // Assuming this adds the Bearer token
+      authentication: true,
       endpoint: `orders/${page}/${pageSize}?place=${place}&isDone=${isDone}`,
       body: null
     }
 
     try {
       const response = await apiService.callApi(apiObject)
-      console.log(`Full response for page ${page}:`, response)
+      // console.log(`Full response for page ${page}:`, response)
 
-      const orders = response.data // Adjust if the response format is different
+      const orders = response.data
 
       if (orders && Array.isArray(orders) && orders.length > 0) {
         allData = allData.concat(orders)
@@ -63,35 +63,36 @@ export async function getAllDoneShopOrders(pageNo = 0, pageCount = 10, place = '
         moreData = false
       }
     } catch (error) {
-      toast.error("Not Avillebale Stock")
       console.error('Error fetching orders:', error)
       moreData = false
     }
   }
 
-  console.log('All data:', allData)
-  toast.success("Order Done")
+  // console.log('All data:', allData)
+  // toast.success("Order Done")
   return allData
 }
 
 export async function createShopOrder(orderData) {
   const apiObject = {
     method: 'POST',
-    authentication: true, // Assuming your ApiService handles token inclusion
-    endpoint: 'orders/', // Adjust the endpoint path as necessary
+    authentication: true, 
+    endpoint: 'orders/', 
     headers: {
-      // 'Authorization': `Bearer ${token}`, // Include the authorization token
-      'Content-Type': 'application/json' // Setting content type for JSON payload
+      // 'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json' 
     },
-    body: JSON.stringify(orderData) // Convert the object to a JSON string
+    body: JSON.stringify(orderData) 
   }
 
   try {
     const response = await apiService.callApi(apiObject)
-    console.log('Order created successfully:', response)
+    toast.success('Order created successfully')
+    // console.log('Order created successfully:', response)
     return response
   } catch (error) {
-    console.error('Error creating order:', error)
+    // console.error('Error creating order:', error)
+    toast.error('Error creating order')
     throw error
   }
 }
@@ -105,16 +106,16 @@ export async function getAllOnlineOrders(pageNo = 0, pageCount = 10, place = 'on
   while (moreData) {
     const apiObject = {
       method: 'GET',
-      authentication: true, // Assuming this adds the Bearer token
+      authentication: true,
       endpoint: `orders/${page}/${pageSize}?place=${place}&isDone=${isDone}`,
       body: null
     }
 
     try {
       const response = await apiService.callApi(apiObject)
-      console.log(`Full response for page ${page}:`, response)
+      // console.log(`Full response for page ${page}:`, response)
 
-      const orders = response.data // Adjust if the response format is different
+      const orders = response.data 
 
       if (orders && Array.isArray(orders) && orders.length > 0) {
         allData = allData.concat(orders)
@@ -128,7 +129,7 @@ export async function getAllOnlineOrders(pageNo = 0, pageCount = 10, place = 'on
     }
   }
 
-  console.log('All data:', allData)
+  // console.log('All data:', allData)
   return allData
 }
 
@@ -141,16 +142,16 @@ export async function getAllDoneOnlineOrders(pageNo = 0, pageCount = 10, place =
   while (moreData) {
     const apiObject = {
       method: 'GET',
-      authentication: true, // Assuming this adds the Bearer token
+      authentication: true, 
       endpoint: `orders/${page}/${pageSize}?place=${place}&isDone=${isDone}`,
       body: null
     }
 
     try {
       const response = await apiService.callApi(apiObject)
-      console.log(`Full response for page ${page}:`, response)
+      // console.log(`Full response for page ${page}:`, response)
 
-      const orders = response.data // Adjust if the response format is different
+      const orders = response.data 
 
       if (orders && Array.isArray(orders) && orders.length > 0) {
         allData = allData.concat(orders)
@@ -164,7 +165,7 @@ export async function getAllDoneOnlineOrders(pageNo = 0, pageCount = 10, place =
     }
   }
 
-  console.log('All data:', allData)
+  // console.log('All data:', allData)
   
   return allData
 }
@@ -172,25 +173,26 @@ export async function getAllDoneOnlineOrders(pageNo = 0, pageCount = 10, place =
 export async function createOrder(orderData) {
   const apiObject = {
     method: 'POST',
-    authentication: true, // Assuming your ApiService handles token inclusion
-    endpoint: 'orders/', // Adjust the endpoint path as necessary
+    authentication: true,
+    endpoint: 'orders/', 
     headers: {
-      // 'Authorization': `Bearer ${token}`, // Include the authorization token
-      'Content-Type': 'application/json' // Setting content type for JSON payload
+      // 'Authorization': `Bearer ${token}`, 
+      'Content-Type': 'application/json' 
     },
-    body: JSON.stringify(orderData) // Convert the object to a JSON string
+    body: JSON.stringify(orderData) 
   }
 
   try {
     const response = await apiService.callApi(apiObject)
-    console.log('Order created successfully:', response)
+    // console.log('Order created successfully:', response)
+    toast.success('Order created successfully')
     return response
   } catch (error) {
-    console.error('Error creating order:', error)
+    // console.error('Error creating order:', error)
+    toast.error('Error creating order')
     throw error
   }
 }
-
 
 export async function markOrderAsDone(orderId, place) {
   const apiObject = {
@@ -201,17 +203,17 @@ export async function markOrderAsDone(orderId, place) {
       'Content-Type': 'application/json'
    
     },
-    body: null  // No body needed for this request
+    body: null 
   }
 
   try {
     const response = await apiService.callApi(apiObject)
-    console.log('Order marked as done successfully:', response)
-    toast.success("Order Done")
+    // console.log('Order marked as done successfully:', response)
+    toast.success('Order marked as done successfully')
     return response
   } catch (error) {
     console.error('Error marking order as done:', error)
-    toast.error("Not Avillebale Stock")
+    toast.error("Error marking order as done")
     throw error
   }
 }
@@ -220,7 +222,7 @@ export const searchReturnOrders = async (searchQuery) => {
   const params = {
     place: 'return',
     isDone: true,
-    text: searchQuery // Add search text to params
+    text: searchQuery 
   }
   
   const response = await apiService.callApi('/orders/search', 'POST', params)
@@ -278,9 +280,11 @@ export async function markOrderAsReturn(orderId) {
 
   try {
     const response = await apiService.callApi(apiObject)
-    console.log('Order marked as Return successfully:', response)
+    toast.success('Order marked as Return successfully')
+    // console.log('Order marked as Return successfully:', response)
     return response
   } catch (error) {
+    toast.error('Error marking order as Return')
     console.error('Error marking order as Return:', error)
     throw error
   }

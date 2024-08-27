@@ -1,6 +1,7 @@
 
 import Cookies from 'cookies-js'
 import apiService from '../apiService'
+import { toast } from 'react-toastify'
 
 export async function getAllmaterials() {
   let allData = []
@@ -85,21 +86,23 @@ export async function AddMaterial(materialName, qty, color, size) {
 
   const apiObject = {
     method: 'POST',
-    authentication: true, // This should trigger inclusion of the Bearer token in apiService
+    authentication: true, 
     endpoint: 'materials',
     headers: {
-      // 'Authorization': `Bearer ${token}`, // Include the authorization token
-      'Content-Type': 'application/json' // Setting content type for JSON payload
+      // 'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json' 
     },
     body: JSON.stringify(materialData)
   }
 
   try {
     const response = await apiService.callApi(apiObject)
-    console.log('Material added successfully:', response)
+    // console.log('Material added successfully:', response)
+    toast.success('Material added successfully')
     return response
   } catch (error) {
-    console.error('Error adding material:', error)
+    toast.error('Error adding material')
+    // console.error('Error adding material:', error)
     throw error
   }
 }
@@ -124,10 +127,12 @@ export async function updateMaterial(id, materialName, qty) {
 
   try {
     const response = await apiService.callApi(apiObject)
-    console.log('Material updated successfully:', response)
+    // console.log('Material updated successfully:', response)
+    toast.success('Material updated successfully')
     return response
   } catch (error) {
-    console.error('Error updating material:', error)
+    toast.error('Error updating material')
+    // console.error('Error updating material:', error)
     throw error
   }
 }
@@ -145,21 +150,21 @@ export const getMaterialHistory = async (materialId, start, end) => {
 
   while (moreData) {
     const apiObject = {
-      method: 'POST', // Change to POST
+      method: 'POST', 
       authentication: true,
       endpoint: `materials/history/${page}/${pageSize}`,
       headers: {
         'Content-Type': 'application/json'
-        // 'Authorization': `Bearer <token>` // Include your token here
+        // 'Authorization': `Bearer <token>` 
       },
-      body: JSON.stringify(materialDataHistory) // Include body in the request
+      body: JSON.stringify(materialDataHistory) 
     }
 
     try {
       const response = await apiService.callApi(apiObject)
-      console.log(`Full response for page ${page}:`, response)
+      // console.log(`Full response for page ${page}:`, response)
 
-      const history = response.data // Use optional chaining to handle cases where response.data might be null
+      const history = response.data 
 
       if (history && Array.isArray(history) && history.length > 0) {
         allHistory = allHistory.concat(history)
@@ -173,6 +178,6 @@ export const getMaterialHistory = async (materialId, start, end) => {
     }
   }
 
-  console.log('All history:', allHistory) // Log the aggregated data
+  // console.log('All history:', 
   return allHistory
 }

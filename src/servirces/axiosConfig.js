@@ -71,24 +71,26 @@ instance.interceptors.response.use(
           })
           .catch((err) => {
             processQueue(err, null)
+            // history.push('/login')
              window.location.href = "/login"
-            // swal({
-            //   title: "Session expired. Please login again",
-            //   closeOnClickOutside: false,
-            //   buttons: {
-            //     dangerMode: {
-            //       text: "Okay",
-            //       value: "action",
-            //       className: "okay-btn"
-            //     }
-            //   }
-            // }).then((value) => {
-            //   if (value === "action") {
-            //     Cookies.remove("ACCESS_TOKEN")
-            //     localStorage.removeItem("LOCAL_STORAGE_KEY")
-            //     window.location.href = "/login"
-            //   }
-            // })
+            swal({
+              title: "Session expired. Please login again",
+              closeOnClickOutside: false,
+              buttons: {
+                dangerMode: {
+                  text: "Okay",
+                  value: "action",
+                  className: "okay-btn"
+                }
+              }
+            }).then((value) => {
+              if (value === "action") {
+                Cookies.remove("ACCESS_TOKEN")
+                localStorage.removeItem("LOCAL_STORAGE_KEY")
+                // history.push('/login')
+                window.location.href = "/login"
+              }
+            })
             reject(err)
           })
           .finally(() => {

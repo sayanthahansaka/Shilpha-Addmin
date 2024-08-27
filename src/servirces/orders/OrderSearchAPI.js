@@ -1,4 +1,5 @@
 import apiService from '../apiService' 
+import { toast } from 'react-toastify'
 
 export async function searchReturnOrders(place, isDone, text, start, limit) {
   const apiObject = {
@@ -21,6 +22,7 @@ export async function searchReturnOrders(place, isDone, text, start, limit) {
     console.log('Orders retrieved successfully:', response)
     return response
   } catch (error) {
+    toast.error('Error retrieving orders')
     console.error('Error retrieving orders:', error)
     throw error
   }

@@ -72,6 +72,7 @@ async function callApi(apiObject) {
               "Session expired",
               0
             )
+            // history.push('/login')
             window.location.href = "/login"
           }
           result = await {

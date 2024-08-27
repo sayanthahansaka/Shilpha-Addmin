@@ -3,7 +3,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, I
 import { createOrder } from '../../servirces/orders/OrdersAPI'
 import { toast } from 'react-toastify'
 
-const OrderModal = ({ isOpen, toggle, addOrder }) => {
+const OrderModal = ({ isOpen, toggle, addOrder, fetchOrders }) => {
   const [formData, setFormData] = useState({
     customerName: '',
     address: '',
@@ -62,11 +62,9 @@ const OrderModal = ({ isOpen, toggle, addOrder }) => {
     try {
       const newOrder = await createOrder(formData)
       addOrder(newOrder) 
-      toast.success("Order created successfully!")
       toggle() 
+      fetchOrders()
     } catch (error) {
-      // toast.error("Failed to create order.")
-      toast.success("Order created successfully!")
       toggle() 
       console.error('Error creating order:', error)
     }

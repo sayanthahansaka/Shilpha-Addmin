@@ -52,7 +52,9 @@ const Materials = () => {
       <Card>
         <CardHeader>
           <CardTitle tag="h5">
-            <Archive /> Materials Stock
+            <Archive /> 
+            Basic Parts Stock
+            {/* Materials Stock */}
           </CardTitle>
           <Button color="primary" onClick={togglePlanModal} style={{ float: 'right' }}>
             Create New Plan

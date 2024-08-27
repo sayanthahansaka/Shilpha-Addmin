@@ -23,26 +23,26 @@ const Online = () => {
       if (Array.isArray(processingData)) {
         setProcessingOrders(processingData)
       } else {
-        toast.error("Unexpected processing data format:", processingData)
+        // toast.error("Unexpected processing data format:", processingData)
         console.error("Unexpected processing data format:", processingData)
       }
 
       if (Array.isArray(doneData)) {
         setDoneOrders(doneData)
       } else {
-        toast.error("Unexpected done data format:", doneData)
+        // toast.error("Unexpected done data format:", doneData)
         console.error("Unexpected done data format:", doneData)
       }
 
       if (Array.isArray(returnData)) {
         setReturnOrders(returnData)
       } else {
-        toast.error("Unexpected return data format:", returnData)
+        // toast.error("Unexpected return data format:", returnData)
         console.error("Unexpected return data format:", returnData)
       }
       
     } catch (error) {
-      toast.error('Error fetching orders:', error)
+      // toast.error('Error fetching orders:', error)
       console.error('Error fetching orders:', error)
     }
   }
@@ -270,7 +270,7 @@ const Online = () => {
 </Card>
 
 
-      <OrderModal isOpen={addModalOpen} toggle={toggleAddModal} onSave={addOrder} />
+      <OrderModal isOpen={addModalOpen} toggle={toggleAddModal} onSave={addOrder} fetchOrders={fetchOrders} />
     </div>
   )
 }

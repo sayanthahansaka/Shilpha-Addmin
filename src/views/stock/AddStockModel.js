@@ -24,12 +24,12 @@ const AddStockModel = ({ isOpen, toggle, fetchStocks }) => {
     e.preventDefault()
     try {
       await addStock(formData.articleNo, formData.color, formData.size, formData.qty, formData.stockPlace)
-      toast.success('Stock added successfully!')
+      // toast.success('Stock added successfully!')
       fetchStocks()
       toggle()
     } catch (error) {
       console.error('Error adding stock:', error)
-      toast.error('Error adding stock. Please try again.')
+      // toast.error('Error adding stock. Please try again.')
     }
   }
 

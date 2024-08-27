@@ -74,10 +74,10 @@ const Shop = () => {
                   <td>{shop.id}</td>
                   <td>{shop.customerName}</td>
                   <td>{shop.address}</td>
-                  <td>{shop.contacts && shop.contacts.map(contact => contact.contact).join(', ')}</td>
-                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.articleNo).join(', ')}</td>
-                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.color).join(', ')}</td>
-                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.size).join(', ')}</td>
+                  <td>{shop.contacts && shop.contacts.map(contact => contact.contact)}</td>
+                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.articleNo)}</td>
+                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.color)}</td>
+                  <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.size)}</td>
                   <td>{shop.packagePrice}</td>
                   <td>{shop.createDate}</td>
                   <td>

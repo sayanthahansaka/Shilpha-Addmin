@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
 import { AddMaterial } from '../../servirces/materials/MaterialsAPI'
-import { toast } from 'react-toastify'
+// import { toast } from 'react-toastify'
 
 const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
   const [formData, setFormData] = useState({
@@ -23,12 +23,12 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
     e.preventDefault()
     try {
       await AddMaterial(formData.materialName, formData.qty, formData.color, formData.size)
-      toast.success('Material added successfully!')
+      // toast.success('Material added successfully!')
       fetchMaterials() // Refresh the table data
       toggle()
     } catch (error) {
       console.error('Error adding material:', error)
-      toast.error('Error adding material. Please try again.')
+      // toast.error('Error adding material. Please try again.')
     }
   }
 

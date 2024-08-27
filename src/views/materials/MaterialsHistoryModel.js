@@ -16,7 +16,7 @@ const MaterialsHistoryModel = ({ isOpen, toggle, materialId }) => {
       setHistory(data)
       console.log("ggggggggggggggggggggggggggggggggg", data)
     } catch (error) {
-      toast.error('Failed to fetch material history')
+      // toast.error('Failed to fetch material history')
     }
   }
 

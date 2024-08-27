@@ -32,12 +32,12 @@ const UpdateMaterialsModel = ({ isOpen, toggle, material, fetchMaterials }) => {
     e.preventDefault()
     try {
       await updateMaterial(material.id, formData.materialName, formData.qty)
-      toast.success('Material updated successfully!')
+      // toast.success('Material updated successfully!')
       fetchMaterials()
       toggle()
     } catch (error) {
       console.error('Error updating material:', error)
-      toast.error('Failed to update material.')
+      // toast.error('Failed to update material.')
     }
   }
 

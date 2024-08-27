@@ -1,21 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input, Form } from 'reactstrap'
-import { AddPlan } from '../../servirces/plan/PlanAPI'
+import { updatePlan } from '../../servirces/plan/PlanAPI'
 import { toast } from 'react-toastify'
 
-const PlanModel = ({ isOpen, toggle }) => {
+const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
   const [formData, setFormData] = useState({
-    employeeName: '',
-    planingStocks: [
-      {
-        articleNo: '',
-        color: '',
-        size: '',
-        insoleMaterialId: '',
-        insoleQty: ''
-      }
-    ],
-    materials: [{ id: '', qty: '' }]
+    employeeName: plan?.employeeName || '',
+    planingStocks: plan?.planingStocks || [],
+    materials: plan?.materials || []
   })
 
   const handleChange = (e) => {
@@ -25,59 +17,55 @@ const PlanModel = ({ isOpen, toggle }) => {
 
   const handlePlaningStockChange = (index, e) => {
     const { name, value } = e.target
-    const newPlaningStocks = formData.planingStocks.map((stock, idx) => {
-      if (index === idx) {
-        return { ...stock, [name]: value }
-      }
-      return stock
-    })
+    const newPlaningStocks = [...formData.planingStocks]
+    newPlaningStocks[index] = { ...newPlaningStocks[index], [name]: value }
     setFormData({ ...formData, planingStocks: newPlaningStocks })
   }
 
   const handleMaterialChange = (index, e) => {
     const { name, value } = e.target
-    const newMaterials = formData.materials.map((material, idx) => {
-      if (index === idx) {
-        return { ...material, [name]: value }
-      }
-      return material
-    })
+    const newMaterials = [...formData.materials]
+    newMaterials[index] = { ...newMaterials[index], [name]: value }
     setFormData({ ...formData, materials: newMaterials })
   }
 
   const addPlaningStockField = () => {
     setFormData({
       ...formData,
-      planingStocks: [
-        ...formData.planingStocks,
-        { articleNo: '', color: '', size: '', insoleMaterialId: '', insoleQty: '' }
-      ]
+      planingStocks: [...formData.planingStocks, { articleNo: '', color: '', size: '', insoleMaterialId: '', insoleQty: '' }]
     })
   }
 
   const addMaterialField = () => {
-    setFormData({ ...formData, materials: [...formData.materials, { id: '', qty: '' }] })
+    setFormData({
+      ...formData,
+      materials: [...formData.materials, { id: '', qty: '' }]
+    })
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    try {
-      const response = await AddPlan(formData)
-      console.log('Plan added successfully:', response)
-      // toast.success('Plan added successfully!')
-    } catch (error) {
-      console.error('Error adding Plan:', error)
-      // toast.error('Error adding Plan. Please try again.')
+    const planData = {
+      id: plan.id,
+      employeeName: formData.employeeName,
+      planingStocks: formData.planingStocks,
+      materials: formData.materials
     }
 
-    toggle()
+    try {
+      await updatePlan(planData)
+      // toast.success('Plan updated successfully!')
+      toggle()  // Close the modal on success
+    } catch (error) {
+      // toast.error('Error updating plan. Please try again.')
+      console.error('Error updating plan:', error)
+    }
   }
 
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
       <Form onSubmit={handleSubmit}>
-        <ModalHeader toggle={toggle}>Create New Plan</ModalHeader>
+        <ModalHeader toggle={toggle}>Update Plan</ModalHeader>
         <ModalBody>
           <FormGroup>
             <Label for="employeeName">Employee Name</Label>
@@ -185,7 +173,7 @@ const PlanModel = ({ isOpen, toggle }) => {
           </Button>
         </ModalBody>
         <ModalFooter>
-          <Button type="submit" color="primary">Add Plan</Button>
+          <Button type="submit" color="primary">Update Plan</Button>
           <Button color="secondary" onClick={toggle}>Cancel</Button>
         </ModalFooter>
       </Form>
@@ -193,4 +181,4 @@ const PlanModel = ({ isOpen, toggle }) => {
   )
 }
 
-export default PlanModel
+export default UpdatePlanModel

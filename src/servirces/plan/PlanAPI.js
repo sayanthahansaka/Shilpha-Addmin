@@ -1,5 +1,6 @@
 import Cookies from 'cookies-js'
 import apiService from '../apiService'
+import { toast } from 'react-toastify'
 
 export async function getAllProcessingPlans() {
     let allData = []
@@ -17,7 +18,7 @@ export async function getAllProcessingPlans() {
   
       try {
         const response = await apiService.callApi(apiObject)
-        console.log(`Full response for page ${page}:`, response)
+        // console.log(`Full response for page ${page}:`, response)
         const plan = response.data 
   
         if (plan && Array.isArray(plan) && plan.length > 0) {
@@ -32,7 +33,7 @@ export async function getAllProcessingPlans() {
       }
     }
   
-    console.log('All data:', allData)
+    // console.log('All data:', allData)
     return allData
   }
 
@@ -52,7 +53,7 @@ export async function getAllProcessingPlans() {
   
       try {
         const response = await apiService.callApi(apiObject)
-        console.log(`Full response for page ${page}:`, response)
+        // console.log(`Full response for page ${page}:`, response)
         const plan = response.data 
   
         if (plan && Array.isArray(plan) && plan.length > 0) {
@@ -67,7 +68,7 @@ export async function getAllProcessingPlans() {
       }
     }
   
-    console.log('All data:', allData)
+    // console.log('All data:', allData)
     return allData
   }
   export async function AddPlan(formData) {
@@ -86,11 +87,11 @@ export async function getAllProcessingPlans() {
         qty: material.qty
       }))
     }
-  console.log(planData)
+  // console.log(planData)
     const apiObject = {
       method: 'POST',
       authentication: true,
-      endpoint: 'plan/', // Ensure this is the correct endpoint for your API
+      endpoint: 'plan/', 
       headers: {
         'Content-Type': 'application/json'
       },
@@ -99,9 +100,11 @@ export async function getAllProcessingPlans() {
   
     try {
       const response = await apiService.callApi(apiObject)
-      console.log('Plan added successfully:', response)
+      // console.log('Plan added successfully:', response)
+      toast.success('Plan added successfully')
       return response
     } catch (error) {
+      toast.error("Error adding Plan")
       console.error('Error adding Plan:', error)
       throw error
     }
@@ -151,16 +154,39 @@ export async function getAllProcessingPlans() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: null  // No body needed for this request
+      body: null  
     }
   
     try {
       const response = await apiService.callApi(apiObject)
-      console.log('Plan updated successfully:', response)
+      // console.log('Plan updated successfully:', response)
+      toast.success('Plan updated successfully')
       return response
     } catch (error) {
+      toast.error('Error updating plan status')
       console.error('Error updating plan status:', error)
       throw error
     }
   }
-  
+
+ export const updatePlan = async (formData) => {
+  const apiObject = {
+    method: 'PUT',
+    authentication: true,
+    endpoint: `plan/update`,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  }
+
+  try {
+    const response = await apiService.callApi(apiObject)
+    toast.success('Success updating plan')
+    return response.data
+  } catch (error) {
+    toast.error('Error updating plan')
+    console.error('Error updating plan:', error)
+    throw error
+  }
+}

@@ -1,4 +1,5 @@
 import apiService from '../apiService' 
+import { toast } from 'react-toastify'
 
 export async function getAllStock() {
     let allData = []
@@ -116,18 +117,21 @@ export async function getAllStock() {
       method: 'POST',
       authentication: true,
       endpoint: `stock/transfer`,
-      body: JSON.stringify({ id, qty, toStock }) // Convert body to JSON string
+      body: JSON.stringify({ id, qty, toStock }) 
     }
   
     try {
       const response = await apiService.callApi(apiObject)
       if (response && response.status === 'SUCCESS') {
+        toast.success("Success transferring stock")
         return response // Assume response is { status: 'SUCCESS', ... }
       } else {
         // console.error('Unexpected response format:', response)
+        toast.error("Some Error transferring stock")
         throw new Error('Unexpected response format')
       }
     } catch (error) {
+      toast.error('Error transferring stock')
       console.error('Error transferring stock:', error)
       throw error
     }
@@ -153,8 +157,10 @@ export const updateStock = async (id, qty, color, stockPlace) => {
 
   try {
     const response = await apiService.callApi(apiObject)
+    toast.success("Error updating stock")
     return response.data
   } catch (error) {
+    toast.error('Error updating stock')
     console.error('Error updating stock:', error)
     throw error
   }
@@ -182,8 +188,10 @@ export async function addStock(articleNo, color, size, qty, stockPlace = 'main')
   try {
     const response = await apiService.callApi(apiObject)
     // console.log('Stock added successfully:', response)
+    toast.success("Stock added successfully")
     return response
   } catch (error) {
+    toast.error("Error adding stock")
     console.error('Error adding stock:', error)
     throw error
   }

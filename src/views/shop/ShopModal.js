@@ -61,10 +61,10 @@ const ShopModal = ({ isOpen, toggle, addShop }) => {
     try {
       const newOrder = await createShopOrder(formData)
       addShop(newOrder) 
-      toast.success("Order created successfully!")
+      // toast.success("Order created successfully!")
       toggle() 
     } catch (error) {
-      toast.error("Failed to create order.")
+      // toast.error("Failed to create order.")
       console.error('Error creating order:', error)
     }
   }

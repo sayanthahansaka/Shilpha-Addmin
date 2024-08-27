@@ -22,12 +22,12 @@ const StockModal = ({ isOpen, toggle, fetchStock }) => {
     e.preventDefault()
     try {
       await transferStock(formData)
-      toast.success('Stock transferred successfully!')
+      // toast.success('Stock transferred successfully!')
       fetchStock() // Refresh the table data
       toggle()
     } catch (error) {
       console.error('Error transferring Stock:', error)
-      toast.error('Error transferring Stock. Please try again.')
+      // toast.error('Error transferring Stock. Please try again.')
     }
   }
 
