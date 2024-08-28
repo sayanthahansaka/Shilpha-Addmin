@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 const OrderModal = ({ isOpen, toggle, addOrder, fetchOrders }) => {
   const [formData, setFormData] = useState({
     customerName: '',
-    address: '',
+    address: 'no need it',
     contacts: [{ contact: '' }],
     ordersDetail: [{ articleNo: '', color: '', size: '', qty: '' }],
     packagePrice: '',
@@ -75,12 +75,12 @@ const OrderModal = ({ isOpen, toggle, addOrder, fetchOrders }) => {
       <ModalHeader toggle={toggle}>Add Order</ModalHeader>
       <ModalBody>
         <FormGroup>
-          <Label for="customerName">Customer Name</Label>
+          <Label for="customerName">code</Label>
           <Input type="text" id="customerName" value={formData.customerName} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
-          <Label for="address">Address</Label>
-          <Input type="text" id="address" value={formData.address} onChange={handleChange} />
+          {/* <Label for="address">Address</Label>
+          <Input type="text" id="address" value={formData.address} onChange={handleChange} /> */}
         </FormGroup>
         <FormGroup>
           <Label>Contacts</Label>

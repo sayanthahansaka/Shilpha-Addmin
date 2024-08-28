@@ -208,8 +208,16 @@ export async function markOrderAsDone(orderId, place) {
 
   try {
     const response = await apiService.callApi(apiObject)
-    // console.log('Order marked as done successfully:', response)
-    toast.success('Order marked as done successfully')
+    console.log('Order marked as done successfully:', response)
+    // toast.success('Order marked as done successfully')
+
+    if (response.success !== false) { // Check for a successful status code
+      toast.success('Order marked as done successfully')
+      return response
+    } else {
+      const errorData = response.data || { message: 'Failed to mark order as done' }
+      throw new Error(errorData.message)
+    }
     return response
   } catch (error) {
     console.error('Error marking order as done:', error)

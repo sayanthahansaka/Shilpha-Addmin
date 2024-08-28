@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 
 // ** Document title
-const TemplateTitle = '%s - Shilpha - Admin'
+const TemplateTitle = '%s - Shilpha Admin'
 
 // ** Default Route
 const DefaultRoute = '/home'
@@ -9,35 +9,35 @@ const DefaultRoute = '/home'
 // ** Merge Routes
 const Routes = [
   {
-    path: '/home',
+    path: "/home",
     component: lazy(() => import('../../views/home/Home'))
   },
   {
-    path: '/plan',
+    path: "/plan",
     component: lazy(() => import('../../views/plan/plan'))
   },
   {
-    path: '/online',
+    path: "/online",
     component: lazy(() => import('../../views/online/Online'))
   },
   {
-    path: '/shop',
+    path: "/shop",
     component: lazy(() => import('../../views/shop/Shop'))
   },
   {
-    path: '/footwearstock',
+    path: "/footwearstock",
     component: lazy(() => import('../../views/stock/Stock'))
   },
   {
-    path: '/materials',
+    path: "/materials",
     component: lazy(() => import('../../views/materials/Materials'))
   },
   {
-    path: '/revenue',
+    path: "/revenue",
     component: lazy(() => import('../../views/revenue/Revenue'))
   },
   {
-    path: '/login',
+    path: "/login",
     component: lazy(() => import('../../views/Login')),
     layout: 'BlankLayout',
     meta: {

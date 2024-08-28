@@ -123,8 +123,8 @@ const Online = () => {
             <thead>
               <tr>
                 <th>Order ID</th>
-                <th>Customer Name</th>
-                <th>Address</th>
+                <th>Order Code</th>
+                
                 <th>Phone Number</th>
                 <th>Article No</th>
                 <th>Color</th>
@@ -140,7 +140,7 @@ const Online = () => {
                 <tr key={index}>
                   <td>{order.id || 'N/A'}</td>
                   <td>{order.customerName || 'N/A'}</td>
-                  <td>{order.address || 'N/A'}</td>
+                  
                   <td>{order.contacts ? order.contacts.map(contact => contact.contact).join(', ') : 'N/A'}</td>
                   <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.articleNo).join(', ') : 'N/A'}</td>
                   <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.color).join(', ') : 'N/A'}</td>
@@ -173,7 +173,7 @@ const Online = () => {
             <thead>
               <tr>
                 <th>Order ID</th>
-                <th>Customer Name</th>
+                <th>Order Code</th>
                 <th>Address</th>
                 <th>Phone Number</th>
                 <th>Article No</th>
@@ -189,7 +189,7 @@ const Online = () => {
                 <tr key={index}>
                   <td>{order.id || 'N/A'}</td>
                   <td>{order.customerName || 'N/A'}</td>
-                  <td>{order.address || 'N/A'}</td>
+                 
                   <td>{order.contacts ? order.contacts.map(contact => contact.contact).join(', ') : 'N/A'}</td>
                   <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.articleNo).join(', ') : 'N/A'}</td>
                   <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.color).join(', ') : 'N/A'}</td>
