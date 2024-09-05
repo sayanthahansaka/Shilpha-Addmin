@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table, Button, Pagination, PaginationItem, PaginationLink } from 'reactstrap'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button, Pagination, PaginationItem, PaginationLink, Spinner } from 'reactstrap'
 import { getAllProcessingPlans, getAllDonePlans, submitPlanAsDone } from '../../servirces/plan/PlanAPI'
 import UpdatePlanModel from './UpdatePlanModel'
 import { toast } from 'react-toastify'
@@ -12,6 +12,8 @@ const Plan = () => {
   const [processingPage, setProcessingPage] = useState(1)
   const [donePage, setDonePage] = useState(1)
   const [itemsPerPage] = useState(10)
+
+  const [loading, setLoading] = useState(false)
 
   // State for controlling the UpdatePlanModel modal
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
@@ -33,6 +35,7 @@ const Plan = () => {
   const fetchPlans = async () => {
     try {
       // Fetch processing and done plans simultaneously
+      setLoading(true)
       const [processingData, doneData] = await Promise.all([
         getAllProcessingPlans(),
         getAllDonePlans()
@@ -51,6 +54,8 @@ const Plan = () => {
       }
     } catch (error) {
       console.error('Error fetching plans:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -83,51 +88,67 @@ const Plan = () => {
           </CardTitle>
         </CardHeader>
         <CardBody>
-          <Table bordered>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Employee Name</th>
-                <th>Start Date</th>
-                <th>Material Details</th>
-                <th>Article No</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentProcessingPlans.length > 0 ? currentProcessingPlans.map((plan, index) => (
-                <tr key={index}>
-                  <td>{plan.id || 'N/A'}</td>
-                  <td>{plan.employeeName || 'N/A'}</td>
-                  <td>{plan.createDate || 'N/A'}</td>
-                  <td>
-                    <ul>
-                      {plan.planMaterialsStocks?.map((material, idx) => (
-                        <li key={idx}>
-                          {material.materialsStock?.materialName || 'N/A'}: {material.qty || 'N/A'}
-                        </li>
-                      ))}
-                    </ul>
-                  </td>
-                  <td>{plan.planingStocks?.map((planStocks, no) => (
-                    <li key={no}>
-                      {planStocks.stockItem?.articleNo}
-                    </li>
-                  ))}</td>
-                  <td>{plan.process || 'N/A'}</td>
-                  <td>
-                    <Button color="primary" onClick={() => markAsDone(plan.id)}>Mark as Done</Button>
-                    <Button color="success" onClick={() => toggleUpdateModal(plan)}>Update plan</Button>
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan="6" className="text-center">No processing plans</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
+        {loading ? (
+  <div className="text-center">
+    <Spinner color="primary" /> Loading...
+  </div>
+) : (
+  <Table bordered>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Employee Name</th>
+        <th>Start Date</th>
+        <th>Material Details</th>
+        <th>Article No</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {currentProcessingPlans.length > 0 ? (
+        currentProcessingPlans.map((plan, index) => (
+          <tr key={index}>
+            <td>{plan.id || 'N/A'}</td>
+            <td>{plan.employeeName || 'N/A'}</td>
+            <td>{plan.createDate || 'N/A'}</td>
+            <td>
+              <ul>
+                {plan.planMaterialsStocks?.map((material, idx) => (
+                  <li key={idx}>
+                    {material.materialsStock?.materialName || 'N/A'}: {material.qty || 'N/A'}
+                  </li>
+                )) || <li>N/A</li>}
+              </ul>
+            </td>
+            <td>
+              <ul>
+                {plan.planingStocks?.map((planStocks, no) => (
+                  <li key={no}>
+                    {planStocks.stockItem?.articleNo || 'N/A'}
+                  </li>
+                )) || <li>N/A</li>}
+              </ul>
+            </td>
+            <td>{plan.process || 'N/A'}</td>
+            <td>
+              <Button color="primary" onClick={() => markAsDone(plan.id)}>
+                Mark as Done
+              </Button>
+              <Button color="success" onClick={() => toggleUpdateModal(plan)}>
+                Update Plan
+              </Button>
+            </td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan="7" className="text-center">No processing plans</td>
+        </tr>
+      )}
+    </tbody>
+  </Table>
+)}
           <Pagination>
             {[...Array(Math.ceil(processingPlans.length / itemsPerPage)).keys()].map(number => (
               <PaginationItem key={number + 1} active={number + 1 === processingPage}>

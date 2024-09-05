@@ -57,10 +57,10 @@ const Router = () => {
     return { LayoutRoutes, LayoutPaths }
   }
 
-  const NotAuthorized = lazy(() => import('@src/views/NotAuthorized'))
+  const NotAuthorized = lazy(() => import('../../src/views/NotAuthorized'))
 
   // ** Init Error Component
-  const Error = lazy(() => import('@src/views/Error'))
+  const Error = lazy(() => import('../../src/views/Error'))
 
   /**
    ** Final Route Component Checks for Login & User Role and then redirects to the route

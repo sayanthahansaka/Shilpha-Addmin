@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table, Button, Pagination, PaginationItem, PaginationLink } from 'reactstrap'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button, Pagination, PaginationItem, PaginationLink, Spinner } from 'reactstrap'
 import { ShoppingCart } from 'react-feather'
 import AddStockModal from './StockModal'
 import { getAllStock, getAllOnlineStock, getAllShopStock } from '../../servirces/stock/StockAPI'
@@ -17,6 +17,9 @@ const Stock = () => {
   const [addStockModalOpen, setAddStockModalOpen] = useState(false)
   const [selectedStock, setSelectedStock] = useState(null)
   const userRole = localStorage.getItem('userRole')
+
+  
+  const [loading, setLoading] = useState(false)
 
   // Pagination states for each table
   const [mainStockPage, setMainStockPage] = useState(1)
@@ -43,6 +46,7 @@ const Stock = () => {
   const paginateShopStock = (pageNumber) => setShopStockPage(pageNumber)
 
   const fetchStock = async () => {
+    setLoading(true)
     try {
       const mainStockData = await getAllStock(0, 10, 'main')
       const onlineOrderStockData = await getAllOnlineStock(0, 10, 'online')
@@ -53,6 +57,8 @@ const Stock = () => {
       setShopStock(shopStockData)
     } catch (error) {
       console.error('Error fetching stock data:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -91,45 +97,54 @@ const Stock = () => {
           )}
         </CardHeader>
         <CardBody>
-          <Table bordered>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Article No</th>
-                <th>Color</th>
-                <th>Size</th>
-                <th>Quantity</th>
-                <th>Stock Place</th>
-                <th>Create Date</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-            {currentMainStock.length > 0 ? currentMainStock.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.articleNo}</td>
-                  <td>{item.color}</td>
-                  <td>{item.size}</td>
-                  <td>{item.qty}</td>
-                  <td>{item.stockPlace}</td>
-                  <td>{new Date(item.createDate).toLocaleDateString()}</td>
-                  <td>
-                    <Button
-                      onClick={() => openUpdateModalWithStock(item)}
-                      color="success"
-                    >
-                      Update Stock
-                    </Button>
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan="8" className="text-center">No Main Stock Available</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
+        {loading ? (
+  <div className="text-center">
+    <Spinner color="primary" /> Loading...
+  </div>
+) : (
+  <Table bordered>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Article No</th>
+        <th>Color</th>
+        <th>Size</th>
+        <th>Quantity</th>
+        <th>Stock Place</th>
+        <th>Create Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {currentMainStock.length > 0 ? (
+        currentMainStock.map((item) => (
+          <tr key={item.id}>
+            <td>{item.id}</td>
+            <td>{item.articleNo}</td>
+            <td>{item.color}</td>
+            <td>{item.size}</td>
+            <td>{item.qty}</td>
+            <td>{item.stockPlace}</td>
+            <td>{new Date(item.createDate).toLocaleDateString()}</td>
+            <td>
+              <Button
+                onClick={() => openUpdateModalWithStock(item)}
+                color="success"
+              >
+                Update Stock
+              </Button>
+            </td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan="8" className="text-center">No Main Stock Available</td>
+        </tr>
+      )}
+    </tbody>
+  </Table>
+)}
+
           <Pagination>
             {[...Array(Math.ceil(mainStock.length / itemsPerPage)).keys()].map(number => (
               <PaginationItem key={number + 1} active={number + 1 === mainStockPage}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table, Label, FormGroup, Input } from 'reactstrap'
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table, Label, FormGroup, Input, Spinner } from 'reactstrap'
 import { toast } from 'react-toastify'
 import { getMaterialHistory } from '../../servirces/materials/MaterialsAPI'  // Import the API function
 
@@ -9,14 +9,18 @@ const MaterialsHistoryModel = ({ isOpen, toggle, materialId }) => {
     startDate: '2024-07-01',
     endDate: '2024-09-01'
   })
+  const [loading, setLoading] = useState(false) // Add loading state
 
   const fetchMaterialHistory = async () => {
+    setLoading(true) // Set loading to true when starting to fetch data
     try {
       const data = await getMaterialHistory(materialId, formData.startDate, formData.endDate)
       setHistory(data)
-      console.log("ggggggggggggggggggggggggggggggggg", data)
+      console.log("Material history data:", data)
     } catch (error) {
-      // toast.error('Failed to fetch material history')
+      toast.error('Failed to fetch material history')
+    } finally {
+      setLoading(false) // Set loading to false when data fetching is complete
     }
   }
 
@@ -50,32 +54,38 @@ const MaterialsHistoryModel = ({ isOpen, toggle, materialId }) => {
         </FormGroup>
         <Button type="submit" color="primary" onClick={handleSubmit}>Show In Table</Button>
         <br /><br />
-        <Table bordered>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Description</th>
-              <th>Quantity</th>
-              <th>Create Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {history.length > 0 ? (
-              history.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.description}</td>
-                  <td>{item.qty}</td>
-                  <td>{item.createDate}</td>
-                </tr>
-              ))
-            ) : (
+        {loading ? (
+          <div className="text-center">
+            <Spinner color="primary" /> Loading...
+          </div>
+        ) : (
+          <Table bordered>
+            <thead>
               <tr>
-                <td colSpan="4" className="text-center">No history found</td>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Create Date</th>
               </tr>
-            )}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {history.length > 0 ? (
+                history.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td>{item.description}</td>
+                    <td>{item.qty}</td>
+                    <td>{item.createDate}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="text-center">No history found</td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        )}
       </ModalBody>
       <ModalFooter>
         <Button color="secondary" onClick={toggle}>Cancel</Button>

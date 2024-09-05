@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table, Button, FormGroup, Input } from 'reactstrap'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button, FormGroup, Input, Spinner } from 'reactstrap'
 import { getAllOnlineOrders, getAllDoneOnlineOrders, markOrderAsDone, markOrderAsReturn, getAllReturnOnlineOrders } from '../../servirces/orders/OrdersAPI'
 import {searchReturnOrders} from '../../servirces/orders/OrderSearchAPI'
 import OrderModal from './OrderModal'
@@ -12,7 +12,10 @@ const Online = () => {
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
+  const [loading, setLoading] = useState(false)
+
   const fetchOrders = async () => {
+    setLoading(true)
     try {
       const [processingData, doneData, returnData] = await Promise.all([
         getAllOnlineOrders(),
@@ -44,6 +47,8 @@ const Online = () => {
     } catch (error) {
       // toast.error('Error fetching orders:', error)
       console.error('Error fetching orders:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -119,46 +124,53 @@ const Online = () => {
           Add New Order
         </Button>
         <CardBody>
-          <Table bordered>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Order Code</th>
-                
-                <th>Phone Number</th>
-                <th>Article No</th>
-                <th>Color</th>
-                <th>Size</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {processingOrders.length > 0 ? processingOrders.map((order, index) => (
-                <tr key={index}>
-                  <td>{order.id || 'N/A'}</td>
-                  <td>{order.customerName || 'N/A'}</td>
-                  
-                  <td>{order.contacts ? order.contacts.map(contact => contact.contact).join(', ') : 'N/A'}</td>
-                  <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.articleNo).join(', ') : 'N/A'}</td>
-                  <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.color).join(', ') : 'N/A'}</td>
-                  <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.size).join(', ') : 'N/A'}</td>
-                  <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.qty).join(', ') : 'N/A'}</td>
-                  <td>{order.packagePrice || 'N/A'}</td>
-                  <td>{order.createDate || 'N/A'}</td>
-                  <td>
-                    <Button color="primary" onClick={() => handleMarkAsDone(order.id)}>Mark as Done</Button>
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan="11" className="text-center">No processing orders</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
+        {loading ? (
+  <div className="text-center">
+    <Spinner color="primary" /> Loading...
+  </div>
+) : (
+  <Table bordered>
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Order Code</th>
+        <th>Phone Number</th>
+        <th>Article No</th>
+        <th>Color</th>
+        <th>Size</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {processingOrders.length > 0 ? (
+        processingOrders.map((order, index) => (
+          <tr key={index}>
+            <td>{order.id || 'N/A'}</td>
+            <td>{order.customerName || 'N/A'}</td>
+            <td>{order.contacts ? order.contacts.map(contact => contact.contact).join(', ') : 'N/A'}</td>
+            <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.articleNo).join(', ') : 'N/A'}</td>
+            <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.color).join(', ') : 'N/A'}</td>
+            <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.size).join(', ') : 'N/A'}</td>
+            <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.qty).join(', ') : 'N/A'}</td>
+            <td>{order.packagePrice || 'N/A'}</td>
+            <td>{order.createDate || 'N/A'}</td>
+            <td>
+              <Button color="primary" onClick={() => handleMarkAsDone(order.id)}>Mark as Done</Button>
+            </td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan="10" className="text-center">No processing orders</td>
+        </tr>
+      )}
+    </tbody>
+  </Table>
+)}
+
         </CardBody>
       </Card>
 
@@ -174,7 +186,7 @@ const Online = () => {
               <tr>
                 <th>Order ID</th>
                 <th>Order Code</th>
-                <th>Address</th>
+               
                 <th>Phone Number</th>
                 <th>Article No</th>
                 <th>Color</th>
@@ -232,8 +244,8 @@ const Online = () => {
       <thead>
         <tr>
           <th>Order ID</th>
-          <th>Customer Name</th>
-          <th>Address</th>
+          <th>Order Code</th>
+         
           <th>Phone Number</th>
           <th>Article No</th>
           <th>Color</th>
@@ -249,14 +261,14 @@ const Online = () => {
             <tr key={index}>
               <td>{order.id || 'N/A'}</td>
               <td>{order.customerName || 'N/A'}</td>
-              <td>{order.address || 'N/A'}</td>
+             
               <td>{order.contacts ? order.contacts.map(contact => contact.contact).join(', ') : 'N/A'}</td>
               <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.articleNo).join(', ') : 'N/A'}</td>
               <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.color).join(', ') : 'N/A'}</td>
               <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.size).join(', ') : 'N/A'}</td>
               <td>{order.packagePrice || 'N/A'}</td>
               <td>{order.createDate || 'N/A'}</td>
-              <td>{order.status || 'N/A'}</td>
+              <td>Return</td>
             </tr>
           ))
         ) : (

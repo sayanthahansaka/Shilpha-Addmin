@@ -19,8 +19,7 @@ export async function getAllmaterials() {
 
     try {
       const response = await apiService.callApi(apiObject)
-      console.log(`Full response for page ${page}:`, response)
-
+    
       // Adjust the path to data if needed
       const materials = response.data // or response.result.data, adjust as necessary
 
@@ -36,7 +35,7 @@ export async function getAllmaterials() {
     }
   }
 
-  console.log('All data:', allData) // Log the aggregated data
+ 
   return allData
 }
 // export async function AddMaterial(shopId, status) {

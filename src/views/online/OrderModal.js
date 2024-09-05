@@ -61,9 +61,10 @@ const OrderModal = ({ isOpen, toggle, addOrder, fetchOrders }) => {
     e.preventDefault() 
     try {
       const newOrder = await createOrder(formData)
+      fetchOrders()
       addOrder(newOrder) 
       toggle() 
-      fetchOrders()
+     
     } catch (error) {
       toggle() 
       console.error('Error creating order:', error)

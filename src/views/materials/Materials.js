@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Table, Button, Pagination, PaginationItem, PaginationLink } from 'reactstrap'
+import { Card, CardBody, CardHeader, CardTitle, Table, Button, Pagination, PaginationItem, PaginationLink, Spinner } from 'reactstrap'
 import { Archive } from 'react-feather'
 import PlanModel from './planModel'
 import AddMaterialsModel from './AddMaterialsModel'
@@ -18,15 +18,25 @@ const Materials = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(10)
 
+  const [loading, setLoading] = useState(false)
+
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentItems = stock.slice(indexOfFirstItem, indexOfLastItem)
 
+
   const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
   const fetchMaterials = async () => {
-    const materials = await getAllmaterials()
-    setStock(materials)
+    setLoading(true)
+    try {
+      const materials = await getAllmaterials()
+      setStock(materials)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -59,50 +69,63 @@ const Materials = () => {
           </Button>
         </CardHeader>
         <CardBody>
-          <div style={{ overflowX: 'auto' }}>
-            <Table bordered>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Material Name</th>
-                  <th>Quantity</th>
-                  <th>Color</th>
-                  <th>Size</th>
-                  <th>Create Date</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentItems.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.id}</td>
-                    <td>{item.materialName}</td>
-                    <td>{item.qty}</td>
-                    <td>{item.color}</td>
-                    <td>{item.size}</td>
-                    <td>{item.createDate}</td>
-                    <td>
-                      <Button
-                        onClick={() => openUpdateModalWithMaterial(item)}
-                        color="success"
-                      >
-                        Update Material
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setSelectedMaterial(item)
-                          toggleHistoryModel()
-                        }}
-                        color="secondary"
-                      >
-                        View
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
+        <div style={{ overflowX: 'auto' }}>
+  {loading ? (
+    <div className="text-center">
+      <Spinner color="primary" /> Loading...
+    </div>
+  ) : (
+    <Table bordered>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Material Name</th>
+          <th>Quantity</th>
+          <th>Color</th>
+          <th>Size</th>
+          <th>Create Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {currentItems.length > 0 ? (
+          currentItems.map((item, index) => (
+            <tr key={index}>
+              <td>{item.id}</td>
+              <td>{item.materialName}</td>
+              <td>{item.qty}</td>
+              <td>{item.color}</td>
+              <td>{item.size}</td>
+              <td>{item.createDate}</td>
+              <td>
+                <Button
+                  onClick={() => openUpdateModalWithMaterial(item)}
+                  color="success"
+                >
+                  Update Material
+                </Button>
+                <Button
+                  onClick={() => {
+                    setSelectedMaterial(item)
+                    toggleHistoryModel()
+                  }}
+                  color="secondary"
+                >
+                  View
+                </Button>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="7" className="text-center">No found Data</td>
+          </tr>
+        )}
+      </tbody>
+    </Table>
+  )}
+</div>
+
           <Pagination>
             {[...Array(Math.ceil(stock.length / itemsPerPage)).keys()].map(number => (
               <PaginationItem key={number + 1} active={number + 1 === currentPage}>

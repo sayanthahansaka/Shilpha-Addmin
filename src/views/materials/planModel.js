@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input, Form } from 'reactstrap'
+import React, { useState, useEffect } from 'react'
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input, Form, Row, Col} from 'reactstrap'
+import { getAllmaterials } from '../../servirces/materials/MaterialsAPI'
 import { AddPlan } from '../../servirces/plan/PlanAPI'
 import { toast } from 'react-toastify'
 
@@ -18,6 +19,47 @@ const PlanModel = ({ isOpen, toggle }) => {
     materials: [{ id: '', qty: '' }]
   })
 
+  const [insoleMaterials, setInsoleMaterials] = useState([])
+  const [nonInsoleMaterials, setNonInsoleMaterials] = useState([])
+
+  useEffect(() => {
+    const fetchMaterials = async () => {
+      try {
+        const response = await getAllmaterials()
+        console.log('API response:', response) // Log the full response
+    
+        // Adjust this line based on the actual structure of your response
+        const data = response.data || response // Adjust according to your response structure
+    
+        if (Array.isArray(data)) {
+          const insoleRegex = /insole|insol/i
+          const filteredInsoleMaterials = data.filter(material => {
+            const normalizedMaterialName = material.materialName.trim().toLowerCase()
+            return insoleRegex.test(normalizedMaterialName)
+          })
+          setInsoleMaterials(filteredInsoleMaterials)
+
+          const notInsoleRegex = /^(?!.*\binsole\b|.*\binsol\b)/i
+          const filteredNonInsoleMaterials = data.filter(material => {
+            const normalizedMaterialName = material.materialName.trim().toLowerCase()
+            return notInsoleRegex.test(normalizedMaterialName)
+          })
+          setNonInsoleMaterials(filteredNonInsoleMaterials)
+
+        } else {
+          console.error('Unexpected data format:', data)
+          setInsoleMaterials([]) // Set an empty array if the data is not in the expected format
+        }
+      } catch (error) {
+        console.error('Error fetching materials:', error)
+        setInsoleMaterials([]) // Set an empty array in case of error
+      }
+    }
+    
+
+    fetchMaterials()
+  }, [])
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
@@ -28,6 +70,17 @@ const PlanModel = ({ isOpen, toggle }) => {
     const newPlaningStocks = formData.planingStocks.map((stock, idx) => {
       if (index === idx) {
         return { ...stock, [name]: value }
+      }
+      return stock
+    })
+    setFormData({ ...formData, planingStocks: newPlaningStocks })
+  }
+
+  const handleInsoleMaterialChange = (index, e) => {
+    const selectedMaterialId = e.target.value
+    const newPlaningStocks = formData.planingStocks.map((stock, idx) => {
+      if (index === idx) {
+        return { ...stock, insoleMaterialId: selectedMaterialId }
       }
       return stock
     })
@@ -65,10 +118,10 @@ const PlanModel = ({ isOpen, toggle }) => {
     try {
       const response = await AddPlan(formData)
       console.log('Plan added successfully:', response)
-      // toast.success('Plan added successfully!')
+      toast.success('Plan added successfully!')
     } catch (error) {
       console.error('Error adding Plan:', error)
-      // toast.error('Error adding Plan. Please try again.')
+      toast.error('Error adding Plan. Please try again.')
     }
 
     toggle()
@@ -91,10 +144,12 @@ const PlanModel = ({ isOpen, toggle }) => {
             />
           </FormGroup>
           <h5>Planing Stocks</h5>
+
+          <FormGroup>
           {formData.planingStocks.map((stock, index) => (
-            <div key={index}>
-              <FormGroup>
-                <Label for={`articleNo-${index}`}>Article No</Label>
+            <Row key={index}>
+              <Col>
+              <Label for={`articleNo-${index}`}>Article No</Label>
                 <Input
                   type="text"
                   name="articleNo"
@@ -103,9 +158,9 @@ const PlanModel = ({ isOpen, toggle }) => {
                   onChange={(e) => handlePlaningStockChange(index, e)}
                   required
                 />
-              </FormGroup>
-              <FormGroup>
-                <Label for={`color-${index}`}>Color</Label>
+              </Col>
+              <Col>
+              <Label for={`color-${index}`}>Color</Label>
                 <Input
                   type="text"
                   name="color"
@@ -114,9 +169,9 @@ const PlanModel = ({ isOpen, toggle }) => {
                   onChange={(e) => handlePlaningStockChange(index, e)}
                   required
                 />
-              </FormGroup>
-              <FormGroup>
-                <Label for={`size-${index}`}>Size</Label>
+              </Col>
+              <Col>
+              <Label for={`size-${index}`}>Size</Label>
                 <Input
                   type="text"
                   name="size"
@@ -125,19 +180,29 @@ const PlanModel = ({ isOpen, toggle }) => {
                   onChange={(e) => handlePlaningStockChange(index, e)}
                   required
                 />
-              </FormGroup>
-              <FormGroup>
-                <Label for={`insoleMaterialId-${index}`}>Insole Material ID</Label>
+              </Col>
+             
+              <Row key={index}>
+              <Col>
+                <Label for={`insoleMaterialId-${index}`}>Insole Material</Label>
                 <Input
-                  type="text"
+                  type="select"
                   name="insoleMaterialId"
                   id={`insoleMaterialId-${index}`}
                   value={stock.insoleMaterialId}
-                  onChange={(e) => handlePlaningStockChange(index, e)}
+                  onChange={(e) => handleInsoleMaterialChange(index, e)}
                   required
-                />
-              </FormGroup>
-              <FormGroup>
+                >
+                  
+                  <option value="">Select Insole Material</option>
+                  {insoleMaterials.map((material) => (
+                    <option key={material.id} value={material.id}>
+                      {material.materialName} - {material.size}
+                    </option>
+                  ))}
+                </Input>
+                </Col>
+                <Col>
                 <Label for={`insoleQty-${index}`}>Insole Quantity</Label>
                 <Input
                   type="number"
@@ -147,39 +212,51 @@ const PlanModel = ({ isOpen, toggle }) => {
                   onChange={(e) => handlePlaningStockChange(index, e)}
                   required
                 />
-              </FormGroup>
-            </div>
+                </Col>
+                </Row>
+            </Row>
+            
           ))}
+         
+        </FormGroup>
+
           <Button color="secondary" onClick={addPlaningStockField}>
             Add Another Planing Stock
           </Button>
           <h5>Materials</h5>
-          {formData.materials.map((material, index) => (
-            <div key={index}>
-              <FormGroup>
-                <Label for={`materialId-${index}`}>Material ID</Label>
-                <Input
-                  type="text"
-                  name="id"
-                  id={`materialId-${index}`}
-                  value={material.id}
-                  onChange={(e) => handleMaterialChange(index, e)}
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for={`materialQty-${index}`}>Quantity</Label>
-                <Input
-                  type="number"
-                  name="qty"
-                  id={`materialQty-${index}`}
-                  value={material.qty}
-                  onChange={(e) => handleMaterialChange(index, e)}
-                  required
-                />
-              </FormGroup>
-            </div>
-          ))}
+          <FormGroup>
+  {formData.materials.map((material, index) => (
+    <div key={index}>
+      <Label for={`materialId-${index}`}>Material ID</Label>
+      <Input
+        type="select"
+        name="id"
+        id={`materialId-${index}`}
+        value={material.id}
+        onChange={(e) => handleMaterialChange(index, e)}
+        required
+      >
+        <option value="">Select Material</option>
+        {nonInsoleMaterials.map((nonInsoleMaterial) => (
+          <option key={nonInsoleMaterial.id} value={nonInsoleMaterial.id}>
+            {nonInsoleMaterial.materialName} - {nonInsoleMaterial.size}
+          </option>
+        ))}
+      </Input>
+
+      <Label for={`materialQty-${index}`}>Quantity</Label>
+      <Input
+        type="number"
+        name="qty"
+        id={`materialQty-${index}`}
+        value={material.qty}
+        onChange={(e) => handleMaterialChange(index, e)}
+        required
+      />
+    </div>
+  ))}
+</FormGroup>
+
           <Button color="secondary" onClick={addMaterialField}>
             Add Another Material
           </Button>
