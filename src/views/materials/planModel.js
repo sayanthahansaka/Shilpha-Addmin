@@ -4,7 +4,7 @@ import { getAllmaterials } from '../../servirces/materials/MaterialsAPI'
 import { AddPlan } from '../../servirces/plan/PlanAPI'
 import { toast } from 'react-toastify'
 
-const PlanModel = ({ isOpen, toggle }) => {
+const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
   const [formData, setFormData] = useState({
     employeeName: '',
     planingStocks: [
@@ -22,43 +22,23 @@ const PlanModel = ({ isOpen, toggle }) => {
   const [insoleMaterials, setInsoleMaterials] = useState([])
   const [nonInsoleMaterials, setNonInsoleMaterials] = useState([])
 
+
   useEffect(() => {
     const fetchMaterials = async () => {
-      try {
-        const response = await getAllmaterials()
-        console.log('API response:', response) // Log the full response
-    
-        // Adjust this line based on the actual structure of your response
-        const data = response.data || response // Adjust according to your response structure
-    
-        if (Array.isArray(data)) {
-          const insoleRegex = /insole|insol/i
-          const filteredInsoleMaterials = data.filter(material => {
-            const normalizedMaterialName = material.materialName.trim().toLowerCase()
-            return insoleRegex.test(normalizedMaterialName)
-          })
-          setInsoleMaterials(filteredInsoleMaterials)
+      const data = await fetchMaterialsPlan()
+      const insoleRegex = /insole|insol/i
+      const filteredInsoleMaterials = data.filter(material => insoleRegex.test(material.materialName.trim().toLowerCase())
+      )
+      setInsoleMaterials(filteredInsoleMaterials)
 
-          const notInsoleRegex = /^(?!.*\binsole\b|.*\binsol\b)/i
-          const filteredNonInsoleMaterials = data.filter(material => {
-            const normalizedMaterialName = material.materialName.trim().toLowerCase()
-            return notInsoleRegex.test(normalizedMaterialName)
-          })
-          setNonInsoleMaterials(filteredNonInsoleMaterials)
-
-        } else {
-          console.error('Unexpected data format:', data)
-          setInsoleMaterials([]) // Set an empty array if the data is not in the expected format
-        }
-      } catch (error) {
-        console.error('Error fetching materials:', error)
-        setInsoleMaterials([]) // Set an empty array in case of error
-      }
+      const notInsoleRegex = /^(?!.*\binsole\b|.*\binsol\b)/i
+      const filteredNonInsoleMaterials = data.filter(material => notInsoleRegex.test(material.materialName.trim().toLowerCase())
+      )
+      setNonInsoleMaterials(filteredNonInsoleMaterials)
     }
-    
 
     fetchMaterials()
-  }, [])
+  }, [fetchMaterialsPlan])
 
   const handleChange = (e) => {
     const { name, value } = e.target
