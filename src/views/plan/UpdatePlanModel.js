@@ -1,14 +1,34 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input, Form } from 'reactstrap'
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input, Form, Row, Col } from 'reactstrap'
 import { updatePlan } from '../../servirces/plan/PlanAPI'
-import { toast } from 'react-toastify'
+// import { toast } from 'react-toastify'
 
 const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
   const [formData, setFormData] = useState({
-    employeeName: plan?.employeeName || '',
-    planingStocks: plan?.planingStocks || [],
-    materials: plan?.materials || []
+    employeeName: '',
+    planingStocks: [{ articleNo: '', color: '', size: '', insoleMaterialId: '', insoleQty: '' }],
+    materials: [{ id: '', qty: '' }]
   })
+
+  useEffect(() => {
+    if (plan) {
+      console.log("Response object: ", plan.planingStocks)
+      setFormData({
+        employeeName: plan.employeeName || '',
+        planingStocks: plan.planingStocks.map(stock => ({
+          articleNo: stock.stockItem.articleNo || '',  // Access articleNo from planingStocks
+          color: stock.stockItem.color || '',          // Assuming color is also in stockItem
+          size: stock.stockItem.size || '',
+          insoleMaterialId: stock.id || '',
+          insoleQty: stock.insoleQty || ''
+        })),
+        materials: plan.planMaterialsStocks.map(material => ({
+          id: material.materialsStock.id || '',
+          qty: material.qty || ''
+        }))
+      })
+    }
+  }, [plan])  
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -17,15 +37,23 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
 
   const handlePlaningStockChange = (index, e) => {
     const { name, value } = e.target
-    const newPlaningStocks = [...formData.planingStocks]
-    newPlaningStocks[index] = { ...newPlaningStocks[index], [name]: value }
+    const newPlaningStocks = formData.planingStocks.map((stock, idx) => {
+      if (index === idx) {
+        return { ...stock, [name]: value }
+      }
+      return stock
+    })
     setFormData({ ...formData, planingStocks: newPlaningStocks })
   }
 
   const handleMaterialChange = (index, e) => {
     const { name, value } = e.target
-    const newMaterials = [...formData.materials]
-    newMaterials[index] = { ...newMaterials[index], [name]: value }
+    const newMaterials = formData.materials.map((material, idx) => {
+      if (index === idx) {
+        return { ...material, [name]: value }
+      }
+      return material
+    })
     setFormData({ ...formData, materials: newMaterials })
   }
 
@@ -37,14 +65,12 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
   }
 
   const addMaterialField = () => {
-    setFormData({
-      ...formData,
-      materials: [...formData.materials, { id: '', qty: '' }]
-    })
+    setFormData({ ...formData, materials: [...formData.materials, { id: '', qty: '' }] })
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
     const planData = {
       id: plan.id,
       employeeName: formData.employeeName,
@@ -55,7 +81,7 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
     try {
       await updatePlan(planData)
       // toast.success('Plan updated successfully!')
-      toggle()  // Close the modal on success
+      toggle()
     } catch (error) {
       // toast.error('Error updating plan. Please try again.')
       console.error('Error updating plan:', error)
@@ -78,10 +104,11 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
               required
             />
           </FormGroup>
+
           <h5>Planing Stocks</h5>
           {formData.planingStocks.map((stock, index) => (
-            <div key={index}>
-              <FormGroup>
+            <Row key={index}>
+              <Col>
                 <Label for={`articleNo-${index}`}>Article No</Label>
                 <Input
                   type="text"
@@ -91,8 +118,8 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
                   onChange={(e) => handlePlaningStockChange(index, e)}
                   required
                 />
-              </FormGroup>
-              <FormGroup>
+              </Col>
+              <Col>
                 <Label for={`color-${index}`}>Color</Label>
                 <Input
                   type="text"
@@ -102,8 +129,8 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
                   onChange={(e) => handlePlaningStockChange(index, e)}
                   required
                 />
-              </FormGroup>
-              <FormGroup>
+              </Col>
+              <Col>
                 <Label for={`size-${index}`}>Size</Label>
                 <Input
                   type="text"
@@ -113,8 +140,8 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
                   onChange={(e) => handlePlaningStockChange(index, e)}
                   required
                 />
-              </FormGroup>
-              <FormGroup>
+              </Col>
+              <Col>
                 <Label for={`insoleMaterialId-${index}`}>Insole Material ID</Label>
                 <Input
                   type="text"
@@ -124,8 +151,9 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
                   onChange={(e) => handlePlaningStockChange(index, e)}
                   required
                 />
-              </FormGroup>
-              <FormGroup>
+                 {/* {console.log("stock.insoleMaterialId ;", stock.insoleMaterialId)} */}
+              </Col>
+              <Col>
                 <Label for={`insoleQty-${index}`}>Insole Quantity</Label>
                 <Input
                   type="number"
@@ -135,16 +163,17 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
                   onChange={(e) => handlePlaningStockChange(index, e)}
                   required
                 />
-              </FormGroup>
-            </div>
+              </Col>
+            </Row>
           ))}
           <Button color="secondary" onClick={addPlaningStockField}>
             Add Another Planing Stock
           </Button>
+
           <h5>Materials</h5>
           {formData.materials.map((material, index) => (
-            <div key={index}>
-              <FormGroup>
+            <Row key={index}>
+              <Col>
                 <Label for={`materialId-${index}`}>Material ID</Label>
                 <Input
                   type="text"
@@ -154,8 +183,8 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
                   onChange={(e) => handleMaterialChange(index, e)}
                   required
                 />
-              </FormGroup>
-              <FormGroup>
+              </Col>
+              <Col>
                 <Label for={`materialQty-${index}`}>Quantity</Label>
                 <Input
                   type="number"
@@ -165,15 +194,15 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
                   onChange={(e) => handleMaterialChange(index, e)}
                   required
                 />
-              </FormGroup>
-            </div>
+              </Col>
+            </Row>
           ))}
           <Button color="secondary" onClick={addMaterialField}>
             Add Another Material
           </Button>
         </ModalBody>
         <ModalFooter>
-          <Button type="submit" color="primary">Update Plan</Button>
+          <Button color="primary" type="submit">Update Plan</Button>
           <Button color="secondary" onClick={toggle}>Cancel</Button>
         </ModalFooter>
       </Form>

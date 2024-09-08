@@ -43,6 +43,7 @@ const Plan = () => {
 
       if (Array.isArray(processingData)) {
         setProcessingPlans(processingData)
+        console.log(processingData)
       } else {
         console.error("Unexpected processing data format:", processingData)
       }
@@ -74,8 +75,8 @@ const Plan = () => {
     }
   }
 
-  const toggleUpdateModal = (plan, material) => {
-    setSelectedPlan(plan, material)
+  const toggleUpdateModal = (plan) => {
+    setSelectedPlan(plan)
     setIsUpdateModalOpen(!isUpdateModalOpen)
   }
 
@@ -222,11 +223,11 @@ const Plan = () => {
 
       {/* Update Plan Modal */}
       {selectedPlan && (
-        <UpdatePlanModel
-          isOpen={isUpdateModalOpen}
-          toggle={() => setIsUpdateModalOpen(!isUpdateModalOpen)}
-          plan={selectedPlan}  // Pass the selected plan to the modal
-        />
+         <UpdatePlanModel
+         isOpen={isUpdateModalOpen}
+         toggle={() => setIsUpdateModalOpen(!isUpdateModalOpen)}
+         plan={selectedPlan} // Pass the selected plan to the modal
+       />
       )}
     </div>
   )

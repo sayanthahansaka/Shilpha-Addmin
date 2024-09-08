@@ -73,12 +73,13 @@ export async function getAllProcessingPlans() {
   }
   export async function AddPlan(formData) {
     // Construct the plan data object according to the API specification
+    console.log("..............", formData)
     const planData = {
       employeeName: formData.employeeName,
       planingStocks: formData.planingStocks.map(stock => ({
         articleNo: stock.articleNo,
         color: stock.color,
-        size: stock.size,
+        size: stock.sizes,
         insoleMaterialId: stock.insoleMaterialId,
         insoleQty: stock.insoleQty
       })),
@@ -87,7 +88,7 @@ export async function getAllProcessingPlans() {
         qty: material.qty
       }))
     }
-  // console.log(planData)
+  console.log("planData", planData)
     const apiObject = {
       method: 'POST',
       authentication: true,
@@ -182,11 +183,17 @@ export async function getAllProcessingPlans() {
 
   try {
     const response = await apiService.callApi(apiObject)
-    toast.success('Success updating plan')
+    console.log("response", response)
+    if (response.status === 200 || response.status === 201) {
+      // Success case
+      toast.success('Plan updated successfully!')
+    } else {
+      // Handle unexpected status codes
+      toast.warn(`${response.description}`)
+    }
     return response.data
   } catch (error) {
     toast.error('Error updating plan')
-    console.error('Error updating plan:', error)
     throw error
   }
 }

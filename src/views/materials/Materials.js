@@ -41,7 +41,7 @@ const Materials = () => {
   const fetchMaterialsPlan = async () => {
     try {
       const response = await getAllmaterials()
-      console.log('API response:', response)
+      // console.log('API response:', response)
       return response.data || response // Return the data structure as needed
     } catch (error) {
       console.error('Error fetching materials:', error)
