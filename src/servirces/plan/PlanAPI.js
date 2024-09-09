@@ -79,7 +79,7 @@ export async function getAllProcessingPlans() {
       planingStocks: formData.planingStocks.map(stock => ({
         articleNo: stock.articleNo,
         color: stock.color,
-        size: stock.sizes,
+        size: stock.size,
         insoleMaterialId: stock.insoleMaterialId,
         insoleQty: stock.insoleQty
       })),
