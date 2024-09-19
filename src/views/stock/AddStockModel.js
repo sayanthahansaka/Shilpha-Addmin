@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
-import { addStock } from '../../servirces/stock/StockAPI' 
+import { addStock} from '../../servirces/stock/StockAPI' 
 import { toast } from 'react-toastify'
 
 const AddStockModel = ({ isOpen, toggle, fetchStocks }) => {

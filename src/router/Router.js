@@ -23,6 +23,7 @@ import VerticalLayout from '@src/layouts/VerticalLayout'
 import HorizontalLayout from '@src/layouts/HorizontalLayout'
 
 const Router = () => {
+  // console.log(isUserLoggedIn)
   // ** Hooks
   const [layout, setLayout] = useLayout()
   const [transition, setTransition] = useRouterTransition()
@@ -51,16 +52,16 @@ const Router = () => {
           LayoutRoutes.push(route)
           LayoutPaths.push(route.path)
         }
-      })
+      }) 
     }
 
     return { LayoutRoutes, LayoutPaths }
   }
 
-  const NotAuthorized = lazy(() => import('../../src/views/NotAuthorized'))
+  const NotAuthorized = lazy(() => import('@src/views/NotAuthorized'))
 
   // ** Init Error Component
-  const Error = lazy(() => import('../../src/views/Error'))
+  const Error = lazy(() => import('@src/views/Error'))
 
   /**
    ** Final Route Component Checks for Login & User Role and then redirects to the route
@@ -77,22 +78,28 @@ const Router = () => {
 
     if (
       (!isUserLoggedIn() && route.meta === undefined) ||
-      (!isUserLoggedIn() && route.meta && !route.meta.authRoute && !route.meta.publicRoute)
+      (!isUserLoggedIn() && 
+      route.meta && 
+      !route.meta.authRoute && 
+      !route.meta.publicRoute)
+     
     ) {
       /**
        ** If user is not Logged in & route meta is undefined
        ** OR
        ** If user is not Logged in & route.meta.authRoute, !route.meta.publicRoute are undefined
        ** Then redirect user to login
-       */
+       */ 
+      console.log("wfer")
 
-      return <Redirect to='/login' />
+      return <Redirect to="/login" />
     } else if (route.meta && route.meta.authRoute && isUserLoggedIn()) {
       // ** If route has meta and authRole and user is Logged in then redirect user to home page (DefaultRoute)
-      return <Redirect to='/' />
-    } else if (isUserLoggedIn() && !ability.can(action || 'read', resource)) {
-      // ** If user is Logged in and doesn't have ability to visit the page redirect the user to Not Authorized
-      return <Redirect to='/misc/not-authorized' />
+      return <Redirect to="/" />
+    // } else if (isUserLoggedIn() && !ability.can(action || 'read', resource)) {
+    //   console.log("wfer")
+    //   // ** If user is Logged in and doesn't have ability to visit the page redirect the user to Not Authorized
+      // return <Redirect to="/" />
     } else {
       // ** If none of the above render component
       return <route.component {...props} />
@@ -153,20 +160,20 @@ const Router = () => {
                             /*eslint-disable */
                             {...(route.appLayout
                               ? {
-                                appLayout: route.appLayout
-                              }
+                                  appLayout: route.appLayout
+                                }
                               : {})}
                             {...(route.meta
                               ? {
-                                routeMeta: route.meta
-                              }
+                                  routeMeta: route.meta
+                                }
                               : {})}
                             {...(route.className
                               ? {
-                                wrapperClass: route.className
-                              }
+                                  wrapperClass: route.className
+                                }
                               : {})}
-                          /*eslint-enable */
+                            /*eslint-enable */
                           >
                             <route.component {...props} />
                             {/* <FinalRoute route={route} {...props} /> */}

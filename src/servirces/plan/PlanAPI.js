@@ -101,7 +101,7 @@ export async function getAllProcessingPlans() {
   
     try {
       const response = await apiService.callApi(apiObject)
-      // console.log('Plan added successfully:', response)
+      console.log('Plan added successfully:', response)
       toast.success('Plan added successfully')
       return response
     } catch (error) {
@@ -171,6 +171,7 @@ export async function getAllProcessingPlans() {
   }
 
  export const updatePlan = async (formData) => {
+  console.log(formData)
   const apiObject = {
     method: 'PUT',
     authentication: true,
@@ -197,3 +198,4 @@ export async function getAllProcessingPlans() {
     throw error
   }
 }
+

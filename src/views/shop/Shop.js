@@ -58,8 +58,8 @@ const Shop = () => {
               <tr>
                 <th>Shop Order ID</th>
                 <th>Shop Name</th>
-                <th>Address</th>
-                <th>Phone Number</th>
+                {/* <th>Address</th>
+                <th>Phone Number</th> */}
                 <th>Article No</th>
                 <th>Colors</th>
                 <th>Sizes</th>
@@ -73,8 +73,8 @@ const Shop = () => {
                 <tr key={shop.id}>
                   <td>{shop.id}</td>
                   <td>{shop.customerName}</td>
-                  <td>{shop.address}</td>
-                  <td>{shop.contacts && shop.contacts.map(contact => contact.contact)}</td>
+                  {/* <td>{shop.address}</td>
+                  <td>{shop.contacts && shop.contacts.map(contact => contact.contact)}</td> */}
                   <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.articleNo)}</td>
                   <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.color)}</td>
                   <td>{shop.ordersDetail && shop.ordersDetail.map(detail => detail.size)}</td>
@@ -137,7 +137,7 @@ const Shop = () => {
           </Table>
         </CardBody>
       </Card>
-      <ShopModal isOpen={isModalOpen} toggle={toggleAddModal} addShop={addShop} />
+      <ShopModal isOpen={isModalOpen} toggle={toggleAddModal} addShop={addShop}  fetchOrders={fetchOrders} />
     </div>
   )
 }

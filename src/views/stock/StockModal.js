@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
-import { transferStock } from '../../servirces/stock/StockAPI'
+import { transferStock, getAllStock } from '../../servirces/stock/StockAPI'
 import { toast } from 'react-toastify'
 
 const StockModal = ({ isOpen, toggle, fetchStock }) => {
@@ -9,6 +9,25 @@ const StockModal = ({ isOpen, toggle, fetchStock }) => {
     qty: '',
     toStock: ''
   })
+
+  const [availableStocks, setAvailableStocks] = useState([]) // Define availableStocks with useState
+
+  useEffect(() => {
+    const fetchStocks = async () => {
+      try {
+        const stockData = await getAllStock()
+        // console.log(stockData)
+        setAvailableStocks(stockData) // Assuming stockData is an array of stock objects
+      } catch (error) {
+        console.error('Error fetching available stocks:', error)
+        toast.error('Failed to load available stocks.')
+      }
+    }
+
+    if (isOpen) {
+      fetchStocks()
+    }
+  }, [isOpen])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -22,12 +41,12 @@ const StockModal = ({ isOpen, toggle, fetchStock }) => {
     e.preventDefault()
     try {
       await transferStock(formData)
-      // toast.success('Stock transferred successfully!')
+      toast.success('Stock transferred successfully!')
       fetchStock() // Refresh the table data
       toggle()
     } catch (error) {
-      console.error('Error transferring Stock:', error)
-      // toast.error('Error transferring Stock. Please try again.')
+      console.error('Error transferring stock:', error)
+      toast.error('Error transferring stock. Please try again.')
     }
   }
 
@@ -37,8 +56,23 @@ const StockModal = ({ isOpen, toggle, fetchStock }) => {
       <Form onSubmit={handleSubmit}>
         <ModalBody>
           <FormGroup>
-            <Label for="id">ID</Label>
-            <Input type="text" name="id" id="id" value={formData.id} onChange={handleChange} required />
+            <Label for="id">Available Stocks</Label>
+            <Input
+              type="select"
+              name="id"
+              id="id"
+              value={formData.id}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Stock</option>
+              {availableStocks.map(stock => (
+                <option key={stock.id} value={stock.id}>
+                 {`${stock.articleNo} - ${stock.size} (${stock.qty})`}
+                  
+                </option>
+              ))}
+            </Input>
           </FormGroup>
 
           <FormGroup>
@@ -61,7 +95,6 @@ const StockModal = ({ isOpen, toggle, fetchStock }) => {
             <Label for="qty">Quantity</Label>
             <Input type="number" name="qty" id="qty" value={formData.qty} onChange={handleChange} required />
           </FormGroup>
-          
         </ModalBody>
         <ModalFooter>
           <Button type="submit" color="primary">Transfer Stock</Button>

@@ -3,6 +3,7 @@ import { Card, CardBody, CardHeader, CardTitle, Table, Button, FormGroup, Input,
 import { getAllOnlineOrders, getAllDoneOnlineOrders, markOrderAsDone, markOrderAsReturn, getAllReturnOnlineOrders } from '../../servirces/orders/OrdersAPI'
 import {searchReturnOrders} from '../../servirces/orders/OrderSearchAPI'
 import OrderModal from './OrderModal'
+import ReturnModal from './ReturnModel'
 import { toast } from 'react-toastify'
 
 const Online = () => {
@@ -11,9 +12,11 @@ const Online = () => {
   const [returnOrders, setReturnOrders] = useState([])
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [returnModalOpen, setReturnModalOpen] = useState(false) // State for the return modal
+  const [selectedOrderId, setSelectedOrderId] = useState(null) // State for the selected order ID
 
   const [loading, setLoading] = useState(false)
-
+console.log(returnOrders)
   const fetchOrders = async () => {
     setLoading(true)
     try {
@@ -77,6 +80,10 @@ const Online = () => {
   }
 
   const toggleAddModal = () => setAddModalOpen(!addModalOpen)
+  const toggleReturnModal = (orderId) => {
+    setSelectedOrderId(orderId) // Set the selected order ID
+    setReturnModalOpen(!returnModalOpen) // Open the return modal
+  }
 
   const addOrder = (newOrder) => {
     setProcessingOrders(prevOrders => [...prevOrders, newOrder])
@@ -209,7 +216,9 @@ const Online = () => {
                   <td>{order.packagePrice || 'N/A'}</td>
                   <td>{order.createDate || 'N/A'}</td>
                   <td>
-                    <Button color="primary" onClick={() => handleMarkAsReturn(order.id)}>Mark as Return</Button>
+                  <Button color="warning" onClick={() => toggleReturnModal(order.id)}>
+                      Return Order
+                    </Button>
                   </td>
                 </tr>
               )) : (
@@ -245,19 +254,20 @@ const Online = () => {
         <tr>
           <th>Order ID</th>
           <th>Order Code</th>
-         
           <th>Phone Number</th>
           <th>Article No</th>
           <th>Color</th>
           <th>Size</th>
           <th>Price</th>
           <th>Date</th>
+          <th>Description</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
         {returnOrders.length > 0 ? (
           returnOrders.map((order, index) => (
+          
             <tr key={index}>
               <td>{order.id || 'N/A'}</td>
               <td>{order.customerName || 'N/A'}</td>
@@ -268,6 +278,7 @@ const Online = () => {
               <td>{order.ordersDetail ? order.ordersDetail.map(detail => detail.size).join(', ') : 'N/A'}</td>
               <td>{order.packagePrice || 'N/A'}</td>
               <td>{order.createDate || 'N/A'}</td>
+              <td>{order.description}</td>
               <td>Return</td>
             </tr>
           ))
@@ -281,7 +292,12 @@ const Online = () => {
   </CardBody>
 </Card>
 
-
+<ReturnModal
+        isOpen={returnModalOpen}
+        toggle={() => toggleReturnModal(null)} // Close the modal
+        orderId={selectedOrderId} // Pass the selected order ID to the modal
+        fetchOrders={fetchOrders}
+      />
       <OrderModal isOpen={addModalOpen} toggle={toggleAddModal} onSave={addOrder} fetchOrders={fetchOrders} />
     </div>
   )

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input, Form, Row, Col, Table } from 'reactstrap'
 import { AddPlan } from '../../servirces/plan/PlanAPI'
+import { getMaterialSizesById } from '../../servirces/materials/MaterialsAPI'
 import { toast } from 'react-toastify'
 
 const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
@@ -9,11 +10,10 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
     planingStocks: [],
     materials: []
   })
-  console.log("yoo ", formData)
 
   const [insoleMaterials, setInsoleMaterials] = useState([])
   const [nonInsoleMaterials, setNonInsoleMaterials] = useState([])
-  const sizes = Array.from({ length: 31 }, (_, i) => 20 + i)
+  const [sizes, setSizes] = useState([]) // Define sizes state
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -30,6 +30,22 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
     fetchMaterials()
   }, [fetchMaterialsPlan])
 
+  const fetchMaterialSizes = async (materialId) => {
+    try {
+      const response = await getMaterialSizesById(materialId)
+      console.log(response)
+      if (Array.isArray(response)) {
+        setSizes(response)
+      } else {
+        console.error('Unexpected response structure:', response)
+        setSizes([])
+      }
+    } catch (error) {
+      console.error('Error fetching material sizes:', error)
+      setSizes([])
+    }
+  }
+  
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
@@ -50,19 +66,24 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
 
   const handleSizeChange = (size) => {
     const currentSizes = currentPlaningStock.sizes ? currentPlaningStock.sizes.split(',') : []
-    const newSizes = currentSizes.includes(size.toString())  ? currentSizes.filter(s => s !== size.toString())  : [...currentSizes, size.toString()]
-    console.log(newSizes)
+    const newSizes = currentSizes.includes(size.toString()) ? currentSizes.filter(s => s !== size.toString()) : [...currentSizes, size.toString()]
     setCurrentPlaningStock({ ...currentPlaningStock, sizes: newSizes.join(',') })
   }
 
   const handleInsoleMaterialChange = (e) => {
     const selectedMaterialId = e.target.value
     setCurrentPlaningStock({ ...currentPlaningStock, insoleMaterialId: selectedMaterialId })
+  
+    if (selectedMaterialId) {
+      fetchMaterialSizes(selectedMaterialId) // Fetch sizes when a material is selected
+    } else {
+      setSizes([]) // Clear sizes if no material is selected
+    }
   }
 
   const addPlaningStockToTable = () => {
     const newSizes = currentPlaningStock.sizes.split(',').filter(size => size.trim() !== '')
-  
+
     const newPlaningStocks = newSizes.map(size => ({
       articleNo: currentPlaningStock.articleNo,
       color: currentPlaningStock.color,
@@ -70,12 +91,12 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
       insoleMaterialId: currentPlaningStock.insoleMaterialId,
       insoleQty: currentPlaningStock.insoleQty
     }))
-  
+
     setFormData({
       ...formData,
       planingStocks: [...formData.planingStocks, ...newPlaningStocks]
     })
-  
+
     setCurrentPlaningStock({
       articleNo: '',
       color: '',
@@ -83,10 +104,9 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
       insoleMaterialId: '',
       insoleQty: ''
     })
-  
+
     console.log("Updated Planing Stocks: ", newPlaningStocks)
   }
-  
 
   const [currentMaterial, setCurrentMaterial] = useState({ id: '', qty: '' })
 
@@ -104,18 +124,15 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
   }
 
   const handleSubmit = async (e) => {
-    console.log('Submitting form data:', formData)
-    console.log('Submitting form data  e :', e)
     e.preventDefault()
-    // console.log('Submitting form data:', formData)
     
     try {
       const response = await AddPlan(formData)
       console.log('Plan added successfully:', response)
-      // toast.success('Plan added successfully!')
+      toast.success('Plan added successfully!')
     } catch (error) {
       console.error('Error adding Plan:', error)
-      // toast.error('Error adding Plan. Please try again.')
+      toast.error('Error adding Plan. Please try again.')
     }
     toggle()
   }
@@ -148,7 +165,6 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
                 id="articleNo"
                 value={currentPlaningStock.articleNo}
                 onChange={handlePlaningStockChange}
-                // required
               />
             </Col>
             <Col>
@@ -159,7 +175,6 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
                 id="color"
                 value={currentPlaningStock.color}
                 onChange={handlePlaningStockChange}
-                // required
               />
             </Col>
             <Col>
@@ -170,7 +185,6 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
                 id="insoleMaterialId"
                 value={currentPlaningStock.insoleMaterialId}
                 onChange={handleInsoleMaterialChange}
-                // required
               >
                 <option value="">Select Insole Material</option>
                 {insoleMaterials.map(material => (
@@ -188,14 +202,13 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
                 id="insoleQty"
                 value={currentPlaningStock.insoleQty}
                 onChange={handlePlaningStockChange}
-                // required
               />
             </Col>
           </Row>
           <Row style={{ marginBottom: '20px' }}>
             <Label style={{ marginBottom: '-5px', marginLeft: '20px' }}>Select Sizes:</Label>
             <div className="size-buttons d-flex flex-wrap" style={{ gap: '15px', marginLeft: '30px' }}>
-              {sizes.map(size => (
+            {sizes && sizes.length > 0 ? sizes.map(size => (
                 <div key={size} className="size-checkbox" style={{ marginBottom: '-10px', marginLeft: '10px' }}>
                   <Input
                     type="checkbox"
@@ -207,9 +220,10 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
                     {size}
                   </Label>
                 </div>
-              ))}
+              )) : <p>No sizes available</p>}
             </div>
           </Row>
+
           <Button color="secondary" onClick={addPlaningStockToTable}>Add to Table</Button>
           <Table bordered style={{ marginTop: '20px' }} >
             <thead>

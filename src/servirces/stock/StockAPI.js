@@ -18,10 +18,10 @@ export async function getAllStock() {
   
       try {
         const response = await apiService.callApi(apiObject)
-        console.log(`Full response for page `, response)
+        // console.log(`Full response for page `, response)
   
         const materials = response.data 
-        console.log(`Full response for page `, materials)
+        // console.log(`Full response for page `, materials)
         if (materials && Array.isArray(materials) && materials.length > 0) {
           allData = allData.concat(materials)
           page += 1
@@ -55,7 +55,7 @@ export async function getAllStock() {
   
       try {
         const response = await apiService.callApi(apiObject)
-        console.log(`Full response for page ${page}:`, response)
+        // console.log(`Full response for page ${page}:`, response)
   
         const materials = response.data 
   

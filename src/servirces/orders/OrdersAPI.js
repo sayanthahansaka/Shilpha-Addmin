@@ -221,7 +221,7 @@ export async function markOrderAsDone(orderId, place) {
     return response
   } catch (error) {
     console.error('Error marking order as done:', error)
-    toast.error("Error marking order as done")
+    toast.error("Error marking order as done: Matching stock not found.")
     throw error
   }
 }
@@ -274,22 +274,44 @@ export async function getAllReturnOnlineOrders(pageNo = 0, pageCount = 10, place
 }
 
 
-export async function markOrderAsReturn(orderId) {
+// export async function markOrderAsReturn(orderId) {
+//   const apiObject = {
+//     method: 'PUT',
+//     authentication: true,
+//     endpoint: `orders/return?orderId=${orderId}`,
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: null  
+//   }
+//   try {
+//     const response = await apiService.callApi(apiObject)
+//     toast.success('Order marked as Return successfully')
+//     // console.log('Order marked as Return successfully:', response)
+//     return response
+//   } catch (error) {
+//     toast.error('Error marking order as Return')
+//     console.error('Error marking order as Return:', error)
+//     throw error
+//   }
+// }
+export async function markOrderAsReturn(orderId, des) {
   const apiObject = {
     method: 'PUT',
-    authentication: true,
-    endpoint: `orders/return?orderId=${orderId}`,
+    authentication: true, // No token needed, so no authentication
+    endpoint: `orders/return`,
     headers: {
       'Content-Type': 'application/json'
-   
     },
-    body: null  
+    body: JSON.stringify({
+      id: orderId,        // Sending 'id' in the body
+      description: des // Add description
+    })
   }
 
   try {
     const response = await apiService.callApi(apiObject)
     toast.success('Order marked as Return successfully')
-    // console.log('Order marked as Return successfully:', response)
     return response
   } catch (error) {
     toast.error('Error marking order as Return')

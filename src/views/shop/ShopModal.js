@@ -3,11 +3,11 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, I
 import { createShopOrder } from '../../servirces/orders/OrdersAPI'
 import { toast } from 'react-toastify'
 
-const ShopModal = ({ isOpen, toggle, addShop }) => {
+const ShopModal = ({ isOpen, toggle, addShop, fetchOrders }) => {
   const [formData, setFormData] = useState({
     customerName: '',
-    address: '',
-    contacts: [{ contact: '' }],
+    address: 'noo need this',
+    contacts: [{ contact: '000' }],
     ordersDetail: [{ articleNo: '', color: '', size: '', qty: '' }],
     packagePrice: '',
     stockPlaceStatus: 'shop',
@@ -60,6 +60,7 @@ const ShopModal = ({ isOpen, toggle, addShop }) => {
     e.preventDefault() 
     try {
       const newOrder = await createShopOrder(formData)
+      fetchOrders()
       addShop(newOrder) 
       // toast.success("Order created successfully!")
       toggle() 
@@ -74,10 +75,10 @@ const ShopModal = ({ isOpen, toggle, addShop }) => {
       <ModalHeader toggle={toggle}>Add Order</ModalHeader>
       <ModalBody>
         <FormGroup>
-          <Label for="customerName">Customer Name</Label>
+          <Label for="customerName">Shop Name</Label>
           <Input type="text" id="customerName" value={formData.customerName} onChange={handleChange} />
         </FormGroup>
-        <FormGroup>
+        {/* <FormGroup>
           <Label for="address">Address</Label>
           <Input type="text" id="address" value={formData.address} onChange={handleChange} />
         </FormGroup>
@@ -94,7 +95,7 @@ const ShopModal = ({ isOpen, toggle, addShop }) => {
             />
           ))}
           <Button color="secondary" size="sm" onClick={addContactField}>Add Contact</Button>
-        </FormGroup>
+        </FormGroup> */}
         <FormGroup>
           <Label>Order Details</Label>
           {formData.ordersDetail.map((detail, index) => (

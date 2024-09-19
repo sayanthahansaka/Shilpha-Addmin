@@ -5,21 +5,24 @@ import { updatePlan } from '../../servirces/plan/PlanAPI'
 
 const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
   const [formData, setFormData] = useState({
+    id: '',
     employeeName: '',
     planingStocks: [{ articleNo: '', color: '', size: '', insoleMaterialId: '', insoleQty: '' }],
     materials: [{ id: '', qty: '' }]
   })
-
+  console.log(formData)
+ 
   useEffect(() => {
     if (plan) {
       console.log("Response object: ", plan.planingStocks)
       setFormData({
+        id: plan.id,
         employeeName: plan.employeeName || '',
         planingStocks: plan.planingStocks.map(stock => ({
           articleNo: stock.stockItem.articleNo || '',  // Access articleNo from planingStocks
           color: stock.stockItem.color || '',          // Assuming color is also in stockItem
           size: stock.stockItem.size || '',
-          insoleMaterialId: stock.id || '',
+          insoleMaterialId: stock.insoleMaterialId || '',
           insoleQty: stock.insoleQty || ''
         })),
         materials: plan.planMaterialsStocks.map(material => ({
@@ -72,7 +75,7 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
     e.preventDefault()
 
     const planData = {
-      id: plan.id,
+      id: formData.id,
       employeeName: formData.employeeName,
       planingStocks: formData.planingStocks,
       materials: formData.materials

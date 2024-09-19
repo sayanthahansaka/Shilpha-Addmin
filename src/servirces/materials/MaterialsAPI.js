@@ -75,33 +75,34 @@ export async function getAllmaterials() {
 //   }
 
 
-export async function AddMaterial(materialName, qty, color, size) {
+export async function AddMaterial(materialsList) {
   const materialData = {
-    materialName,
-    color,
-    size,
-    qty
+    list: materialsList.map(material => ({
+      materialName: material.materialName,
+      color: material.color,
+      size: material.size, // assuming 'sizes' is a string or single size value
+      qty: material.qty
+    }))
   }
+  console.log(materialData)
 
   const apiObject = {
     method: 'POST',
     authentication: true, 
     endpoint: 'materials',
     headers: {
-      // 'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json' 
+      // 'Authorization': `Bearer <token>`, // Replace <token> with the actual token
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(materialData)
   }
 
   try {
     const response = await apiService.callApi(apiObject)
-    // console.log('Material added successfully:', response)
-    toast.success('Material added successfully')
+    toast.success('Materials added successfully')
     return response
   } catch (error) {
-    toast.error('Error adding material')
-    // console.error('Error adding material:', error)
+    toast.error('Error adding materials')
     throw error
   }
 }
@@ -127,7 +128,13 @@ export async function updateMaterial(id, materialName, qty) {
   try {
     const response = await apiService.callApi(apiObject)
     // console.log('Material updated successfully:', response)
-    toast.success('Material updated successfully')
+    if (response.status === 'SUCCESS') {
+      toast.success('Material updated successfully')
+  } else {
+    const errorMessage = response.data?.message || 'Something went wrong.'
+    toast.error(errorMessage)
+  }
+    // toast.success('Material updated successfully')
     return response
   } catch (error) {
     toast.error('Error updating material')
@@ -179,4 +186,28 @@ export const getMaterialHistory = async (materialId, start, end) => {
 
   // console.log('All history:', 
   return allHistory
+}
+export async function getMaterialSizesById(id) {
+  const apiObject = {
+    method: 'GET',
+    authentication: true,
+    endpoint: `materials/size/get/${id}`,
+    body: null
+  }
+
+  try {
+    const response = await apiService.callApi(apiObject)
+    const sizes = response.data
+    console.log(sizes)
+
+    if (sizes && Array.isArray(sizes)) {
+      return sizes
+    } else {
+      console.error('Unexpected response format:', response)
+      return []
+    }
+  } catch (error) {
+    console.error('Error fetching material sizes:', error)
+    return []
+  }
 }
