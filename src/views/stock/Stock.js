@@ -105,7 +105,7 @@ const Stock = () => {
   <Table bordered>
     <thead>
       <tr>
-        <th>ID</th>
+        {/* <th>ID</th> */}
         <th>Article No</th>
         <th>Color</th>
         <th>Size</th>
@@ -119,11 +119,14 @@ const Stock = () => {
       {currentMainStock.length > 0 ? (
         currentMainStock.map((item) => (
           <tr key={item.id}>
-            <td>{item.id}</td>
+            {/* <td>{item.id}</td> */}
             <td>{item.articleNo}</td>
             <td>{item.color}</td>
             <td>{item.size}</td>
-            <td>{item.qty}</td>
+            <td style={{
+                                    backgroundColor: item && item.qty < 5 ? '#ff7979' : '#dff9fb',
+                                    color: 'black'
+                                  }}>{item.qty}</td>
             <td>{item.stockPlace}</td>
             <td>{new Date(item.createDate).toLocaleDateString()}</td>
             <td>
@@ -168,7 +171,7 @@ const Stock = () => {
           <Table bordered>
             <thead>
               <tr>
-                <th>ID</th>
+                {/* <th>ID</th> */}
                 <th>Article No</th>
                 <th>Color</th>
                 <th>Size</th>
@@ -180,7 +183,7 @@ const Stock = () => {
             <tbody>
             {currentOnlineStock.length > 0 ? currentOnlineStock.map((item) => (
                 <tr key={item.id}>
-                  <td>{item.id}</td>
+                  {/* <td>{item.id}</td> */}
                   <td>{item.articleNo}</td>
                   <td>{item.color}</td>
                   <td>{item.size}</td>
@@ -218,7 +221,7 @@ const Stock = () => {
           <Table bordered>
             <thead>
               <tr>
-                <th>ID</th>
+                {/* <th>ID</th> */}
                 <th>Article No</th>
                 <th>Color</th>
                 <th>Size</th>
@@ -230,7 +233,7 @@ const Stock = () => {
             <tbody>
               {currentShopStock.length > 0 ? currentShopStock.map((item) => (
                 <tr key={item.id}>
-                  <td>{item.id}</td>
+                  {/* <td>{item.id}</td> */}
                   <td>{item.articleNo}</td>
                   <td>{item.color}</td>
                   <td>{item.size}</td>
@@ -256,13 +259,12 @@ const Stock = () => {
           </Pagination>
         </CardBody>
       </Card>
-
-      {/* Modals for adding and updating stock */}
+    
       <UpdateModal
         isOpen={updateModalOpen}
         toggle={toggleUpdateModal}
         fetchStock={fetchStock}
-        selectedStock={selectedStock}
+        selectedStock={selectedStock} 
       />
       <AddStockModel
         isOpen={addStockModalOpen}

@@ -87,7 +87,7 @@ const Materials = () => {
               <Table bordered>
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    {/* <th>ID</th> */}
                     <th>Material Name</th>
                     <th>Quantity</th>
                     <th>Color</th>
@@ -100,7 +100,7 @@ const Materials = () => {
                   {currentItems.length > 0 ? (
                     currentItems.map((item, index) => (
                       <tr key={index}>
-                        <td>{item.id}</td>
+                        {/* <td>{item.id}</td> */}
                         <td>{item.materialName}</td>
                         <td>{item.qty}</td>
                         <td>{item.color}</td>

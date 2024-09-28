@@ -136,7 +136,8 @@ console.log(returnOrders)
     <Spinner color="primary" /> Loading...
   </div>
 ) : (
-  <Table bordered>
+  <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+      <Table bordered style={{ width: '100%', minWidth: '600px' }}>
     <thead>
       <tr>
         <th>Order ID</th>
@@ -176,6 +177,7 @@ console.log(returnOrders)
       )}
     </tbody>
   </Table>
+  </div>
 )}
 
         </CardBody>
@@ -188,7 +190,8 @@ console.log(returnOrders)
           </CardTitle>
         </CardHeader>
         <CardBody>
-          <Table bordered>
+        <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+        <Table bordered style={{ width: '100%', minWidth: '600px' }}>
             <thead>
               <tr>
                 <th>Order ID</th>
@@ -228,6 +231,7 @@ console.log(returnOrders)
               )}
             </tbody>
           </Table>
+          </div>
         </CardBody>
       </Card>
 
@@ -249,7 +253,8 @@ console.log(returnOrders)
     </FormGroup>
   </CardHeader>
   <CardBody>
-    <Table bordered>
+  <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+  <Table bordered style={{ width: '100%', minWidth: '600px' }}>
       <thead>
         <tr>
           <th>Order ID</th>
@@ -289,6 +294,7 @@ console.log(returnOrders)
         )}
       </tbody>
     </Table>
+    </div>
   </CardBody>
 </Card>
 

@@ -3,7 +3,8 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, La
 import { updateStock } from '../../servirces/stock/StockAPI'
 import { toast } from 'react-toastify'
 
-const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
+const UpdateModal = ({ isOpen, toggle, stock,  fetchStock, selectedStock }) => {
+  
   const [formData, setFormData] = useState({
     id: '',
     qty: '',
@@ -35,11 +36,12 @@ const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
     try {
       // Make sure id is correctly passed
       console.log('Submitting form with data:', formData)
-      await updateStock(formData.id, formData.qty, formData.color, formData.stockPlace)
+      await updateStock(selectedStock.id, formData.qty, formData.color, formData.stockPlace)
       // toast.success('Stock updated successfully!')
-      if (typeof fetchStocks === 'function') {
-        fetchStocks()
-      }
+      // if (typeof fetchStocks === 'function') {
+        fetchStock()
+        
+      // }
       toggle()
     } catch (error) {
       console.error('Error updating stock:', error)
@@ -53,7 +55,7 @@ const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
       <Form onSubmit={handleSubmit}>
         <ModalBody>
           {/* Hidden input for id, useful for debugging but not displayed to the user */}
-          <FormGroup>
+          {/* <FormGroup>
             <Label for="id">ID</Label>
             <Input
               type="text"
@@ -63,7 +65,7 @@ const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
               onChange={handleChange}
               // disabled  // Disable the input if id should not be changed by the user
             />
-          </FormGroup>
+          </FormGroup> */}
           <FormGroup>
             <Label for="qty">Quantity</Label>
             <Input
@@ -86,7 +88,7 @@ const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
               required
             />
           </FormGroup>
-          <FormGroup>
+          {/* <FormGroup>
             <Label for="stockPlace">Stock Place</Label>
             <Input
               type="text"
@@ -96,7 +98,7 @@ const UpdateModal = ({ isOpen, toggle, stock, fetchStocks }) => {
               onChange={handleChange}
               required
             />
-          </FormGroup>
+          </FormGroup> */}
         </ModalBody>
         <ModalFooter>
           <Button type="submit" color="primary">Update Stock</Button>

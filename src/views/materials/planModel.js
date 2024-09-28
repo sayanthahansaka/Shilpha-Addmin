@@ -138,14 +138,12 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
   }
 
   return (
-    <Modal isOpen={isOpen} toggle={toggle}
-    style={{ maxWidth: '90vw', width: '800px', maxHeight: '90vh', height: 'auto' }}
-    >
+    <Modal isOpen={isOpen} toggle={toggle} style={{ maxWidth: '90vw', width: '800px', maxHeight: '90vh', height: 'auto' }}>
       <Form onSubmit={handleSubmit}>
         <ModalHeader toggle={toggle}>Create New Plan</ModalHeader>
         <ModalBody>
           <FormGroup>
-            <Label for="employeeName">Employee Name</Label>
+            <Label for="employeeName">Plan Number</Label>
             <Input
               type="text"
               name="employeeName"
@@ -206,7 +204,7 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
             </Col>
           </Row>
           <Row style={{ marginBottom: '20px' }}>
-            
+
             <Label style={{ marginBottom: '-5px', marginLeft: '20px' }}>Select Sizes:</Label>
             <div className="size-buttons d-flex flex-wrap" style={{ gap: '15px', marginLeft: '50px' }}>
             {sizes && sizes.length > 0 ? sizes.map(size => (

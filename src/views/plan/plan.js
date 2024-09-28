@@ -97,8 +97,8 @@ const Plan = () => {
   <Table bordered>
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Employee Name</th>
+        {/* <th>ID</th> */}
+        <th>Plan Number</th>
         <th>Start Date</th>
         <th>Material Details</th>
         <th>Article No</th>
@@ -110,7 +110,7 @@ const Plan = () => {
       {currentProcessingPlans.length > 0 ? (
         currentProcessingPlans.map((plan, index) => (
           <tr key={index}>
-            <td>{plan.id || 'N/A'}</td>
+            {/* <td>{plan.id || 'N/A'}</td> */}
             <td>{plan.employeeName || 'N/A'}</td>
             <td>{plan.createDate || 'N/A'}</td>
             <td>
@@ -172,8 +172,8 @@ const Plan = () => {
           <Table bordered>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Employee Name</th>
+                {/* <th>ID</th> */}
+                <th>Plan Number</th>
                 <th>Start Date</th>
                 <th>Material Details</th>
                 <th>Article No</th>
@@ -183,7 +183,7 @@ const Plan = () => {
             <tbody>
               {currentDonePlans.length > 0 ? currentDonePlans.map((plan, index) => (
                 <tr key={index}>
-                  <td>{plan.id || 'N/A'}</td>
+                  {/* <td>{plan.id || 'N/A'}</td> */}
                   <td>{plan.employeeName || 'N/A'}</td>
                   <td>{plan.createDate || 'N/A'}</td>
                   <td>
