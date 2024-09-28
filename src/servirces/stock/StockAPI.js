@@ -112,30 +112,67 @@ export async function getAllStock() {
     return allData
   }
 
+  // export async function transferStock({ id, qty, toStock }) {
+  //   const apiObject = {
+  //     method: 'POST',
+  //     authentication: true,
+  //     endpoint: `stock/transfer`,
+  //     body: JSON.stringify({ id, qty, toStock }) 
+  //   }
+  
+  //   try {
+  //     const response = await apiService.callApi(apiObject)
+  //     if (response && response.status === 'SUCCESS') {
+  //       toast.success("Success transferring stock")
+  //       return response // Assume response is { status: 'SUCCESS', ... }
+  //     } else {
+  //       // console.error('Unexpected response format:', response)
+  //       toast.error("Some Error transferring stock")
+  //       throw new Error('Unexpected response format')
+  //     }
+  //   } catch (error) {
+  //     toast.error('Error transferring stock')
+  //     console.error('Error transferring stock:', error)
+  //     throw error
+  //   }
+  // }
   export async function transferStock({ id, qty, toStock }) {
+    const stockData = {
+      id,
+      qty,
+      toStock
+    }
+    console.log('Transferring stock:', stockData)
+    
     const apiObject = {
       method: 'POST',
       authentication: true,
       endpoint: `stock/transfer`,
-      body: JSON.stringify({ id, qty, toStock }) 
+      body: JSON.stringify({
+        list: [
+          {
+            id,
+            qty,
+            toStock
+          }
+        ]
+      })
     }
   
     try {
       const response = await apiService.callApi(apiObject)
+      console.log('API response:', response)
       if (response && response.status === 'SUCCESS') {
         toast.success("Success transferring stock")
-        return response // Assume response is { status: 'SUCCESS', ... }
       } else {
-        // console.error('Unexpected response format:', response)
         toast.error("Some Error transferring stock")
-        throw new Error('Unexpected response format')
       }
     } catch (error) {
-      toast.error('Error transferring stock')
-      console.error('Error transferring stock:', error)
-      throw error
+      console.error('Error during stock transfer:', error)
     }
-  }
+    
+  }  
+
 export const updateStock = async (id, qty, color, stockPlace) => {
   console.log("ID :", id)
   const data = {
@@ -194,5 +231,30 @@ export async function addStock(articleNo, color, size, qty, stockPlace = 'main')
     toast.error("Error adding stock")
     console.error('Error adding stock:', error)
     throw error
+  }
+}
+
+export async function getStockSizesById(id) {
+  const apiObject = {
+    method: 'GET',
+    authentication: true,
+    endpoint: `stock/size/get/${id}`,
+    body: null
+  }
+
+  try {
+    const response = await apiService.callApi(apiObject)
+    const sizes = response.data
+    console.log(sizes)
+
+    if (sizes && Array.isArray(sizes)) {
+      return sizes
+    } else {
+      console.error('Unexpected response format:', response)
+      return []
+    }
+  } catch (error) {
+    console.error('Error fetching material sizes:', error)
+    return []
   }
 }

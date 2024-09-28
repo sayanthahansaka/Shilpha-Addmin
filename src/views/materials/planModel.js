@@ -206,8 +206,9 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
             </Col>
           </Row>
           <Row style={{ marginBottom: '20px' }}>
+            
             <Label style={{ marginBottom: '-5px', marginLeft: '20px' }}>Select Sizes:</Label>
-            <div className="size-buttons d-flex flex-wrap" style={{ gap: '15px', marginLeft: '30px' }}>
+            <div className="size-buttons d-flex flex-wrap" style={{ gap: '15px', marginLeft: '50px' }}>
             {sizes && sizes.length > 0 ? sizes.map(size => (
                 <div key={size} className="size-checkbox" style={{ marginBottom: '-10px', marginLeft: '10px' }}>
                   <Input
@@ -225,7 +226,8 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
           </Row>
 
           <Button color="secondary" onClick={addPlaningStockToTable}>Add to Table</Button>
-          <Table bordered style={{ marginTop: '20px' }} >
+          <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+      <Table bordered style={{ width: '100%', minWidth: '600px' }}>
             <thead>
               <tr>
                 <th>Article No</th>
@@ -247,7 +249,7 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
               ))}
             </tbody>
           </Table>
-
+</div>
           <h5 style={{ marginTop: '20px' }}>Materials</h5>
           <Row>
             <Col>
@@ -281,7 +283,8 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
             </Col>
           </Row>
           <Button color="secondary" onClick={addMaterialToTable}>Add to Table</Button>
-          <Table bordered style={{ marginTop: '20px' }}>
+          <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+      <Table bordered style={{ width: '100%', minWidth: '600px' }}>
             <thead>
               <tr>
                 <th>Material ID</th>
@@ -297,6 +300,7 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
               ))}
             </tbody>
           </Table>
+          </div>
         </ModalBody>
         <ModalFooter>
           <Button type="submit" color="primary">Submit</Button>

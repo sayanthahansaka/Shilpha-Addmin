@@ -3,20 +3,17 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, I
 import { updatePlan } from '../../servirces/plan/PlanAPI'
 // import { toast } from 'react-toastify'
 
-const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
+const UpdatePlanModel = ({ isOpen, toggle, plan, fetchPlans }) => {
   const [formData, setFormData] = useState({
-    id: '',
     employeeName: '',
     planingStocks: [{ articleNo: '', color: '', size: '', insoleMaterialId: '', insoleQty: '' }],
     materials: [{ id: '', qty: '' }]
   })
-  console.log(formData)
- 
+
   useEffect(() => {
     if (plan) {
       console.log("Response object: ", plan.planingStocks)
       setFormData({
-        id: plan.id,
         employeeName: plan.employeeName || '',
         planingStocks: plan.planingStocks.map(stock => ({
           articleNo: stock.stockItem.articleNo || '',  // Access articleNo from planingStocks
@@ -75,7 +72,7 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
     e.preventDefault()
 
     const planData = {
-      id: formData.id,
+      id: plan.id,
       employeeName: formData.employeeName,
       planingStocks: formData.planingStocks,
       materials: formData.materials
@@ -84,6 +81,7 @@ const UpdatePlanModel = ({ isOpen, toggle, plan }) => {
     try {
       await updatePlan(planData)
       // toast.success('Plan updated successfully!')
+      fetchPlans()
       toggle()
     } catch (error) {
       // toast.error('Error updating plan. Please try again.')

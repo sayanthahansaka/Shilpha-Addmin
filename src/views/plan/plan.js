@@ -226,6 +226,7 @@ const Plan = () => {
          <UpdatePlanModel
          isOpen={isUpdateModalOpen}
          toggle={() => setIsUpdateModalOpen(!isUpdateModalOpen)}
+         fetchPlans={fetchPlans}
          plan={selectedPlan} // Pass the selected plan to the modal
        />
       )}

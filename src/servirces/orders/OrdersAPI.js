@@ -296,6 +296,7 @@ export async function getAllReturnOnlineOrders(pageNo = 0, pageCount = 10, place
 //   }
 // }
 export async function markOrderAsReturn(orderId, des) {
+  console.log(orderId, des)
   const apiObject = {
     method: 'PUT',
     authentication: true, // No token needed, so no authentication

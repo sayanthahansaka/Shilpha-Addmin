@@ -103,7 +103,7 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
 
           <FormGroup>
             <Label>Select Sizes:</Label>
-            <div className="size-buttons d-flex flex-wrap" style={{ gap: '20px' }}>
+            <div className="size-buttons d-flex flex-wrap" style={{ gap: '25px' }}>
               {sizes.map(size => (
                 <div key={size} className="size-checkbox">
                   <Input
@@ -113,15 +113,16 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
                     onChange={() => handleSizeChange(size)}
                   />
                   <Label for={`size-${size}`}>{size}</Label>
-                </div>
+                </div> 
               ))}
             </div>
           </FormGroup>
 
           <Button color="secondary" onClick={handleAddToTable}>Add to Table</Button>
 
-          <Table bordered style={{ marginTop: '20px' }}>
-            <thead>
+          <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+      <Table bordered style={{ width: '100%', minWidth: '600px' }}>
+        <thead>
               <tr>
                 <th>Material Name</th>
                 <th>Color</th>
@@ -148,6 +149,7 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
               ))}
             </tbody>
           </Table>
+          </div>
         </ModalBody>
         <ModalFooter>
           <Button type="submit" color="primary">Submit</Button>
