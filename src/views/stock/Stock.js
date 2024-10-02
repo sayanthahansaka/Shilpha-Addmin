@@ -123,10 +123,7 @@ const Stock = () => {
             <td>{item.articleNo}</td>
             <td>{item.color}</td>
             <td>{item.size}</td>
-            <td style={{
-                                    backgroundColor: item && item.qty < 5 ? '#ff7979' : '#dff9fb',
-                                    color: 'black'
-                                  }}>{item.qty}</td>
+            <td style={{backgroundColor: item && item.qty < 5 ? '#ff7979' : '#dff9fb', color: 'black'}}>{item.qty}</td>
             <td>{item.stockPlace}</td>
             <td>{new Date(item.createDate).toLocaleDateString()}</td>
             <td>
@@ -187,7 +184,7 @@ const Stock = () => {
                   <td>{item.articleNo}</td>
                   <td>{item.color}</td>
                   <td>{item.size}</td>
-                  <td>{item.qty}</td>
+                  <td style={{backgroundColor: item && item.qty < 5 ? '#ff7979' : '#dff9fb', color: 'black'}}>{item.qty}</td>
                   <td>{item.stockPlace}</td>
                   <td>{new Date(item.createDate).toLocaleDateString()}</td>
                 </tr>
@@ -237,7 +234,7 @@ const Stock = () => {
                   <td>{item.articleNo}</td>
                   <td>{item.color}</td>
                   <td>{item.size}</td>
-                  <td>{item.qty}</td>
+                  <td style={{backgroundColor: item && item.qty < 5 ? '#ff7979' : '#dff9fb', color: 'black'}}>{item.qty}</td>
                   <td>{item.stockPlace}</td>
                   <td>{new Date(item.createDate).toLocaleDateString()}</td>
                 </tr>

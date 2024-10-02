@@ -185,12 +185,12 @@ export async function getAllProcessingPlans() {
   try {
     const response = await apiService.callApi(apiObject)
     console.log("response", response)
-    if (response.status === 200 || response.status === 201) {
+    if (response.status === "SUCCESS") {
       // Success case
       toast.success('Plan updated successfully!')
     } else {
       // Handle unexpected status codes
-      toast.warn(`${response.description}`)
+      toast.error('Error updating plan Quantity Not Found...!')
     }
     return response.data
   } catch (error) {

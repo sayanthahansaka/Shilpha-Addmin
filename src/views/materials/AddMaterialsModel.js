@@ -9,8 +9,14 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
     sizes: '',
     qty: ''
   })
-  const [materials, setMaterials] = useState([]) // Track materials to be added to the table
-  const sizes = Array.from({ length: 20 }, (_, i) => 26 + i) // Sizes from 26 to 45
+  const [materials, setMaterials] = useState([]) 
+  const sizes = Array.from({ length: 20 }, (_, i) => 26 + i) 
+  const colors = [
+    "Black", "Chanel Black", "Brown", "Chanel Brown", "Tan", "Chanel Tan", "White", "Chanel White",
+    "Ash", "Chanel Ash", "Purple", "Maroon", "Beige", "Chanel Beige", "Sea Green", "Navy Blue",
+    "Light Blue", "Royal Blue", "Light Pink", "Salmon Pink", "Red", "Wine Red", "Yellow", "Chanel Gold",
+    "Dust Gold", "Rose Gold", "Dust Silver", "Gold"
+  ]
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -56,11 +62,17 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
       // console.log(materials)
       await AddMaterial(materials)
       fetchMaterials() // Refresh the table data
+      setMaterials([])
       toggle() // Close the modal
     } catch (error) {
       console.error('Error adding materials:', error)
     }
   }  
+
+  const handleCancel = () => {
+    setMaterials([])
+    toggle() 
+  }
 
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
@@ -81,14 +93,21 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
           <FormGroup>
             <Label for="color">Color</Label>
             <Input
-              type="text"
+              type="select"
               name="color"
               id="color"
               value={formData.color}
               onChange={handleChange}
+              style={{ backgroundColor: formData.color }} 
               // required
-            />
+            >
+              <option value="">Select Color</option>
+              {colors.map((color, index) => (
+                <option key={index} value={color}>{color}</option>
+              ))}
+            </Input>
           </FormGroup>
+
           {/* <FormGroup>
             <Label for="qty">Quantity</Label>
             <Input
@@ -153,7 +172,7 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
         </ModalBody>
         <ModalFooter>
           <Button type="submit" color="primary">Submit</Button>
-          <Button color="secondary" onClick={toggle}>Cancel</Button>
+          <Button color="secondary" onClick={handleCancel}>Cancel</Button>
         </ModalFooter>
       </Form>
     </Modal>

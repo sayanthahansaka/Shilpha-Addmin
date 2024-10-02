@@ -11,6 +11,12 @@ const UpdateModal = ({ isOpen, toggle, stock,  fetchStock, selectedStock }) => {
     color: '',
     stockPlace: 'main'
   })
+  const colors = [
+    "Black", "Chanel Black", "Brown", "Chanel Brown", "Tan", "Chanel Tan", "White", "Chanel White",
+    "Ash", "Chanel Ash", "Purple", "Maroon", "Beige", "Chanel Beige", "Sea Green", "Navy Blue",
+    "Light Blue", "Royal Blue", "Light Pink", "Salmon Pink", "Red", "Wine Red", "Yellow", "Chanel Gold",
+    "Dust Gold", "Rose Gold", "Dust Silver", "Gold"
+  ]
 
   useEffect(() => {
     if (stock) {
@@ -80,13 +86,19 @@ const UpdateModal = ({ isOpen, toggle, stock,  fetchStock, selectedStock }) => {
           <FormGroup>
             <Label for="color">Color</Label>
             <Input
-              type="text"
+              type="select"
               name="color"
               id="color"
               value={formData.color}
               onChange={handleChange}
-              required
-            />
+              style={{ backgroundColor: formData.color }} 
+              // required
+            >
+              <option value="">Select Color</option>
+              {colors.map((color, index) => (
+                <option key={index} value={color}>{color}</option>
+              ))}
+              </Input>
           </FormGroup>
           {/* <FormGroup>
             <Label for="stockPlace">Stock Place</Label>

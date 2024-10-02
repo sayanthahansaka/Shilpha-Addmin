@@ -13,7 +13,13 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
 
   const [insoleMaterials, setInsoleMaterials] = useState([])
   const [nonInsoleMaterials, setNonInsoleMaterials] = useState([])
-  const [sizes, setSizes] = useState([]) // Define sizes state
+  const [sizes, setSizes] = useState([]) 
+  const colors = [
+    "Black", "Chanel Black", "Brown", "Chanel Brown", "Tan", "Chanel Tan", "White", "Chanel White",
+    "Ash", "Chanel Ash", "Purple", "Maroon", "Beige", "Chanel Beige", "Sea Green", "Navy Blue",
+    "Light Blue", "Royal Blue", "Light Pink", "Salmon Pink", "Red", "Wine Red", "Yellow", "Chanel Gold",
+    "Dust Gold", "Rose Gold", "Dust Silver", "Gold"
+  ]
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -49,6 +55,12 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
+  }
+
+  const handleInsoleQtyChange = (e, index) => {
+    const { value } = e.target 
+    const updatedPlaningStocks = formData.planingStocks.map((stock, i) => (i === index ? { ...stock, insoleQty: value } : stock))
+    setFormData({ ...formData, planingStocks: updatedPlaningStocks })
   }
 
   const [currentPlaningStock, setCurrentPlaningStock] = useState({
@@ -168,12 +180,19 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
             <Col>
               <Label for="color">Color</Label>
               <Input
-                type="text"
-                name="color"
-                id="color"
+                 type="select"
+                 name="color"
+                 id="color"
                 value={currentPlaningStock.color}
                 onChange={handlePlaningStockChange}
-              />
+                style={{ backgroundColor: currentPlaningStock.color }} // This sets the background color based on the selected color
+                // required
+              >
+                <option value="">Select Color</option>
+                {colors.map((color, index) => (
+                  <option key={index} value={color}>{color}</option>
+                ))}
+                </Input>
             </Col>
             <Col>
               <Label for="insoleMaterialId">Insole Material</Label>
@@ -187,12 +206,12 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
                 <option value="">Select Insole Material</option>
                 {insoleMaterials.map(material => (
                   <option key={material.id} value={material.id}>
-                    {material.materialName}
+                    {material.materialName} - {material.color}
                   </option>
                 ))}
               </Input>
             </Col>
-            <Col>
+            {/* <Col>
               <Label for="insoleQty">Insole Quantity</Label>
               <Input
                 type="number"
@@ -201,7 +220,7 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
                 value={currentPlaningStock.insoleQty}
                 onChange={handlePlaningStockChange}
               />
-            </Col>
+            </Col> */}
           </Row>
           <Row style={{ marginBottom: '20px' }}>
 
@@ -242,7 +261,13 @@ const PlanModel = ({ isOpen, toggle, fetchMaterialsPlan }) => {
                   <td>{stock.color}</td>
                   <td>{stock.size}</td>
                   <td>{stock.insoleMaterialId}</td>
-                  <td>{stock.insoleQty}</td>
+                  <td><Input
+                        type="number"
+                        name="insoleQty"
+                        id={`insoleQty-${index}`}
+                        value={stock.insoleQty || ''}
+                        onChange={(e) => handleInsoleQtyChange(e, index)}
+                      /></td>
                 </tr>
               ))}
             </tbody>

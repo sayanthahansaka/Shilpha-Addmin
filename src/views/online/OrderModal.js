@@ -14,7 +14,12 @@ const OrderModal = ({ isOpen, toggle, addOrder, fetchOrders }) => {
     stockPlaceStatus: 'online',
     date: ''
   })
-
+  const colors = [
+    "Black", "Chanel Black", "Brown", "Chanel Brown", "Tan", "Chanel Tan", "White", "Chanel White",
+    "Ash", "Chanel Ash", "Purple", "Maroon", "Beige", "Chanel Beige", "Sea Green", "Navy Blue",
+    "Light Blue", "Royal Blue", "Light Pink", "Salmon Pink", "Red", "Wine Red", "Yellow", "Chanel Gold",
+    "Dust Gold", "Rose Gold", "Dust Silver", "Gold"
+  ]
   const handleChange = (event) => {
     const { id, value } = event.target
     setFormData(prevState => ({
@@ -111,11 +116,18 @@ const OrderModal = ({ isOpen, toggle, addOrder, fetchOrders }) => {
               </Col>
               <Col>
                 <Input
-                  type="text"
+                  type="select"
                   placeholder="Color"
                   value={detail.color}
                   onChange={(e) => handleOrderDetailChange(index, 'color', e.target.value)}
-                />
+                  style={{ backgroundColor: detail.color }} 
+                  // required
+                >
+                  <option value="">Select Color</option>
+                  {colors.map((color, index) => (
+                    <option key={index} value={color}>{color}</option>
+                  ))}
+                </Input>
               </Col>
               <Col>
                 <Input
