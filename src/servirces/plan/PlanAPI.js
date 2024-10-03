@@ -98,11 +98,18 @@ export async function getAllProcessingPlans() {
       },
       body: JSON.stringify(planData)
     }
-  
-    try {
       const response = await apiService.callApi(apiObject)
       console.log('Plan added successfully:', response)
-      toast.success('Plan added successfully')
+      // toast.success('Plan added successfully')
+      
+    try {
+      if (response.status === "SUCCESS") {
+        // Success case
+        toast.success('Plan updated successfully!')
+      } else {
+        // Handle unexpected status codes
+        toast.error('Error adding Plan Quantity Not Found...!')
+      }
       return response
     } catch (error) {
       toast.error("Error adding Plan")

@@ -161,7 +161,7 @@ export async function getAllStock() {
   
     try {
       const response = await apiService.callApi(apiObject)
-      console.log('API response:', response)
+      console.log('API response treanse :', response)
       if (response && response.status === 'SUCCESS') {
         toast.success("Success transferring stock")
       } else {

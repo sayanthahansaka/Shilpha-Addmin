@@ -96,10 +96,17 @@ export async function AddMaterial(materialsList) {
     },
     body: JSON.stringify(materialData)
   }
+  
 
   try {
     const response = await apiService.callApi(apiObject)
-    toast.success('Materials added successfully')
+    if (response && response.status === 'SUCCESS') {
+      toast.success("Materials added successfully")
+    } else {
+      toast.error("Some Error adding materials")
+    }
+    // console.log(response)
+    // toast.success('Materials added successfully')
     return response
   } catch (error) {
     toast.error('Error adding materials')

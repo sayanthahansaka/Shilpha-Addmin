@@ -15,7 +15,7 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
     "Black", "Chanel Black", "Brown", "Chanel Brown", "Tan", "Chanel Tan", "White", "Chanel White",
     "Ash", "Chanel Ash", "Purple", "Maroon", "Beige", "Chanel Beige", "Sea Green", "Navy Blue",
     "Light Blue", "Royal Blue", "Light Pink", "Salmon Pink", "Red", "Wine Red", "Yellow", "Chanel Gold",
-    "Dust Gold", "Rose Gold", "Dust Silver", "Gold"
+    "Dust Gold", "Rose Gold", "Dust Silver", "Gold", "Pink", "Green"
   ]
 
   const handleChange = (e) => {
@@ -79,17 +79,45 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
       <ModalHeader toggle={toggle}>Add New Material</ModalHeader>
       <Form onSubmit={handleSubmit}>
         <ModalBody>
-          <FormGroup>
-            <Label for="materialName">Material Name</Label>
-            <Input
-              type="text"
-              name="materialName"
-              id="materialName"
-              value={formData.materialName}
-              onChange={handleChange}
-              // required
-            />
-          </FormGroup>
+        <FormGroup>
+  <Label for="materialName">Material Name</Label>
+  <Input
+    type="select"
+    name="materialName"
+    id="materialName"
+    value={formData.materialName}
+    onChange={handleChange}
+  >
+    <option value="">Select Material</option>
+    <option value="CK insole">CK insole</option>
+    <option value="test ">teseet</option>
+    <option value="FN insole">FN insole</option>
+    <option value="2015 insole">2015 insole</option>
+    <option value="015 insole">015 insole</option>
+    <option value="7585 insole">7585 insole</option>
+    <option value="C24 insole">C24 insole</option>
+    <option value="C008 insole">C008 insole</option>
+    <hr></hr>
+    <option value="4mm Bord">4mm Board</option>
+    <option value="2mm Bord">2mm Board</option>
+    <hr></hr>
+    <option value="Heet glue">Heet glue</option>
+    <option value="320 glue (White glue)">320 glue (White glue)</option>
+    <option value="320 glue (White glue)">430 glue ( Yellow glue )</option>
+    <hr></hr>
+    <option value="D.S.I. Sheet (Mat sheet)">D.S.I. Sheet (Mat sheet)</option>
+    <option value="D.S.I. Non Heet Sheet">D.S.I. Non Heet Sheet</option>
+    <hr></hr>
+    <option value="Flat sole">Flat sole</option>
+    <option value="GoGo sole">GoGo sole</option>
+    <option value="C-008 flat sole">C-008 flat sole</option>
+    <option value="CW-24 weg sole">CW-24 weige sole</option>
+    <option value="FN Black weg sole">FN Black weige sole</option>
+    <option value="Gen'ts sole (B-18)">Gent's sole ( B-18)</option>
+    <option value="HF sole">HF sole</option>
+  </Input>
+</FormGroup>
+
           <FormGroup>
             <Label for="color">Color</Label>
             <Input
@@ -135,7 +163,15 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
                 </div> 
               ))}
             </div>
+            <br>
+            </br><Input  type="checkbox"
+                    id={`size-${100}`}
+                    
+                    onChange={() => handleSizeChange(100)} />
+                    <Label >Non Size</Label>
+            
           </FormGroup>
+          
 
           <Button color="secondary" onClick={handleAddToTable}>Add to Table</Button>
 
@@ -154,7 +190,10 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
                 <tr key={index}>
                   <td>{material.materialName}</td>
                   <td>{material.color}</td>
-                  <td>{material.size}</td>
+                  <td>
+  {material.size !== '100' ? material.size : 'no'}
+</td>
+
                   <td> 
                   <Input
                       type="number"

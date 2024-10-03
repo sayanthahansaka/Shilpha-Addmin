@@ -104,7 +104,18 @@ const Materials = () => {
                         <td>{item.materialName}</td>
                         <td>{item.qty}</td>
                         <td>{item.color}</td>
-                        <td>{item.size}</td>
+                        <td>
+                          {(() => {
+                            if (item.size !== 100) {
+                              return item.size
+                            } else {
+                              return 'Non Size'
+                            }
+                          })()}
+                        </td>
+
+
+                        {/* <td>{item.size}</td> */}
                         <td>{item.createDate}</td>
                         <td>
                           <Button

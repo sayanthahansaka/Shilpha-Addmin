@@ -61,10 +61,12 @@ const StockModal = ({ isOpen, toggle, fetchStock }) => {
   }
 
   const handleSizeChange = (size) => {
-    const updatedSizes = currentStock.selectedSizes.includes(size) ? currentStock.selectedSizes.filter(s => s !== size) : [...currentStock.selectedSizes, size]
-      
+    const sizeString = size.toString()
+    const updatedSizes = currentStock.selectedSizes.includes(sizeString) ? currentStock.selectedSizes.filter((s) => s !== sizeString) : [...currentStock.selectedSizes, sizeString]
+  
     setCurrentStock({ ...currentStock, selectedSizes: updatedSizes })
   }
+  
 
   const addStockToTable = () => {
     const stockToAdd = currentStock.selectedSizes.map(size => {
@@ -125,30 +127,29 @@ const StockModal = ({ isOpen, toggle, fetchStock }) => {
           </FormGroup>
 
           <FormGroup>
-            <Row>
-              <Label>Select Sizes:</Label>
-              <div className="size-buttons d-flex flex-wrap" style={{ gap: '15px', marginLeft: '15px' }}>
-                {sizes.length > 0 ? (
-                  sizes.map((size) => (
-                    <div key={size.id} className="form-check" style={{ marginRight: '15px' }}>
-                      <Input
-                        type="checkbox"
-                        className="form-check-input"
-                        id={`size-${size.id}`}
-                        checked={currentStock.selectedSizes.includes(size.size.toString())}
-
-                        onChange={() => handleSizeChange(size.size)}
-                      />
-                      <Label className="form-check-label" for={`size-${size.id}`}>
-                        {size.size}
-                      </Label>
-                    </div>
-                  ))
-                ) : (
-                  <p>No sizes available</p>
-                )}
-              </div>
-            </Row>
+          <Row>
+  <Label>Select Sizes:</Label>
+  <div className="size-buttons d-flex flex-wrap" style={{ gap: '15px', marginLeft: '15px' }}>
+    {sizes.length > 0 ? (
+      sizes.map((size) => (
+        <div key={size.id} className="form-check" style={{ marginRight: '15px' }}>
+          <Input
+            type="checkbox"
+            className="form-check-input"
+            id={`size-${size.id}`}
+            checked={currentStock.selectedSizes.includes(size.size.toString())}
+            onChange={() => handleSizeChange(size.size)} // Pass size as is
+          />
+          <Label className="form-check-label" for={`size-${size.id}`}>
+            {size.size}
+          </Label>
+        </div>
+      ))
+    ) : (
+      <p>No sizes available</p>
+    )}
+  </div>
+</Row>
           </FormGroup>
 
 
