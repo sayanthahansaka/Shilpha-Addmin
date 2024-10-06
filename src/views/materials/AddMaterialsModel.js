@@ -90,8 +90,9 @@ const AddMaterialsModel = ({ isOpen, toggle, fetchMaterials }) => {
   >
     <option value="">Select Material</option>
     <option value="CK insole">CK insole</option>
-    <option value="test ">teseet</option>
+    {/* <option value="test ">teseet</option> */}
     <option value="FN insole">FN insole</option>
+    <option value="WFN insole">WFN insole</option>
     <option value="2015 insole">2015 insole</option>
     <option value="015 insole">015 insole</option>
     <option value="7585 insole">7585 insole</option>

@@ -99,7 +99,7 @@ export async function getAllProcessingPlans() {
       body: JSON.stringify(planData)
     }
       const response = await apiService.callApi(apiObject)
-      console.log('Plan added successfully:', response)
+      // console.log('Plan added successfully:', response)
       // toast.success('Plan added successfully')
       
     try {

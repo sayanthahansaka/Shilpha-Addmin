@@ -94,7 +94,8 @@ const Plan = () => {
     <Spinner color="primary" /> Loading...
   </div>
 ) : (
-  <Table bordered>
+  <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+      <Table bordered style={{ width: '100%', minWidth: '600px' }}>
     <thead>
       <tr>
         {/* <th>ID</th> */}
@@ -149,6 +150,7 @@ const Plan = () => {
       )}
     </tbody>
   </Table>
+  </div>
 )}
           <Pagination>
             {[...Array(Math.ceil(processingPlans.length / itemsPerPage)).keys()].map(number => (
@@ -169,7 +171,8 @@ const Plan = () => {
           </CardTitle>
         </CardHeader>
         <CardBody>
-          <Table bordered>
+        <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+        <Table bordered style={{ width: '100%', minWidth: '600px' }}>
             <thead>
               <tr>
                 {/* <th>ID</th> */}
@@ -209,6 +212,7 @@ const Plan = () => {
               )}
             </tbody>
           </Table>
+          </div>
           <Pagination>
             {[...Array(Math.ceil(donePlans.length / itemsPerPage)).keys()].map(number => (
               <PaginationItem key={number + 1} active={number + 1 === donePage}>

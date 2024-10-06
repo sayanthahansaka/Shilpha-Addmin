@@ -136,42 +136,35 @@ export async function getAllStock() {
   //     throw error
   //   }
   // }
-  export async function transferStock({ id, qty, toStock }) {
-    const stockData = {
-      id,
-      qty,
-      toStock
-    }
-    console.log('Transferring stock:', stockData)
-    
+  export async function transferStock(list) {
+    console.log("yummmmmmmmmmmmmmmmmmm", list)
+    // Prepare the request body
     const apiObject = {
       method: 'POST',
-      authentication: true,
-      endpoint: `stock/transfer`,
-      body: JSON.stringify({
-        list: [
-          {
-            id,
-            qty,
-            toStock
-          }
-        ]
-      })
+      authentication: true,  // Assuming authentication is required
+      endpoint: 'stock/transfer',  // Update if needed
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ list })  // Passing the list of stocks
     }
   
     try {
+      // Make the API call
       const response = await apiService.callApi(apiObject)
-      console.log('API response treanse :', response)
+  
+      // Handle the response
       if (response && response.status === 'SUCCESS') {
-        toast.success("Success transferring stock")
+        toast.success('Successfully transferred stock')
       } else {
-        toast.error("Some Error transferring stock")
+        toast.error('Error occurred while transferring stock')
       }
     } catch (error) {
       console.error('Error during stock transfer:', error)
+      toast.error('Failed to transfer stock due to server error')
     }
-    
-  }  
+  }
+  
 
 export const updateStock = async (id, qty, color, stockPlace) => {
   console.log("ID :", id)
